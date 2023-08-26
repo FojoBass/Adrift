@@ -5,6 +5,7 @@
     grid-template-columns: 1fr 4fr;
     grid-gap: 20px;
     align-items: flex-start;
+    max-width: 1500px;
 
     .dashboard_sides {
       box-shadow: 0 0 10px $box_shd;
@@ -101,11 +102,23 @@
 
       footer {
         margin-top: 10px;
+        @include flexDisplay(center, space-between);
 
         .pagination {
           padding: 10px 20px;
           cursor: pointer;
           outline: none;
+        }
+
+        .publish_art_btn {
+          background-color: $acc_clr;
+          padding: 10px 25px;
+          color: $txt_clr2;
+          border-radius: $brd_rad_small;
+
+          &:hover {
+            background-color: darken($acc_clr, 10);
+          }
         }
       }
 

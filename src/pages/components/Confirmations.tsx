@@ -13,7 +13,8 @@ const Confirmations = () => {
           <button
             className='close_btn'
             onClick={() =>
-              setConfirmations && setConfirmations({ isShow: false, msg: '' })
+              setConfirmations &&
+              setConfirmations({ isShow: false, msg: '', type: '' })
             }
           >
             <FaTimes />
@@ -28,8 +29,9 @@ const Confirmations = () => {
           <button
             className='act_btn yes_btn'
             onClick={() => {
-              setAffirm && setAffirm(true);
-              setConfirmations && setConfirmations({ isShow: false, msg: '' });
+              setAffirm && setAffirm({ state: true, type: confirmations.type });
+              setConfirmations &&
+                setConfirmations({ isShow: false, msg: '', type: '' });
             }}
           >
             Yes
@@ -37,7 +39,8 @@ const Confirmations = () => {
           <button
             className='act_btn no_btn'
             onClick={() =>
-              setConfirmations && setConfirmations({ isShow: false, msg: '' })
+              setConfirmations &&
+              setConfirmations({ isShow: false, msg: '', type: '' })
             }
           >
             No

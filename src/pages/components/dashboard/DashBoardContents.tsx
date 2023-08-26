@@ -11,7 +11,18 @@ import {
 } from 'firebase/firestore';
 import { db } from '../../../services/firbase_config';
 import { v4 } from 'uuid';
-import { ArticleInfoInt, CommentInt, VerUrlsInt } from '../../../types';
+import {
+  ArticleInfoInt,
+  CommentInt,
+  MailEnum,
+  StatusEnum,
+  VerUrlsInt,
+} from '../../../types';
+import { usePaystackPayment } from 'react-paystack';
+import { PaystackProps } from 'react-paystack/dist/types';
+import ShortUniqueId from 'short-unique-id';
+import { toast } from 'react-toastify';
+import { updateStatus } from '../../../features/article/articleAsyncuThunk';
 
 interface DashBoardContentsInt {
   article: ArticleInfoInt;
@@ -25,16 +36,18 @@ enum RoleClassEnum {
 }
 
 const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
+  const uid = new ShortUniqueId({ length: 7 });
+
   const {
     setCommentArticleId,
     setStatusArticleId,
     setVersionArticleId,
     setReviewersArticleId,
     setEditorsArticleId,
-    verDisplayArticle,
+    setSendMail,
+    setIsReload,
   } = useGlobalContext();
   const { isLoggedIn, userDetails } = useAppSelector((state) => state.user);
-  const { authorArticles } = useAppSelector((state) => state.article);
   const {
     setAuthorComments,
     setReviewersComments,
@@ -43,6 +56,45 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
     setInitialLoading,
   } = articleSlice.actions;
   const dispatch = useAppDispatch();
+  const reference: string = uid();
+
+  const paystackConfig: PaystackProps = {
+    email: userDetails.email,
+    amount: 10000,
+    publicKey: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY ?? '',
+    reference,
+  };
+
+  const initializePayment = usePaystackPayment(paystackConfig);
+
+  const onSuccess = () => {
+    dispatch(
+      updateStatus({
+        status: 'pending',
+        articleId: article.id ?? '',
+      })
+    );
+
+    setIsReload && setIsReload(true);
+    toast.success('Payment successful');
+
+    setSendMail &&
+      setSendMail({
+        state: true,
+        type: MailEnum.pubArt,
+        id: article.id ?? '',
+        refId: reference,
+      });
+  };
+
+  // you can call this function anything
+  const onClose = () => {
+    toast.info('Payment canceled');
+  };
+
+  const handlePublishClick = () => {
+    initializePayment(onSuccess, onClose);
+  };
 
   const [roleClass, setRoleClass] = useState<RoleClassEnum>(RoleClassEnum.auth);
 
@@ -235,7 +287,10 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
 
   return (
     <>
-      <div className={`main_opt ${roleClass}`} key={v4()}>
+      <div
+        className={`main_opt ${roleClass} ${article.status}_super_wrapper`}
+        key={v4()}
+      >
         <div className='id_col col'>{article.id}</div>
         <div className='title_col col'>{article.title}</div>
         <div className='categ_col col'>{article.category}</div>
@@ -246,14 +301,22 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
               userDetails.role === 'editor' || userDetails.role === 'admin'
                 ? 'hover'
                 : ''
-            }`}
+            } ${article.status}`}
             onClick={
               userDetails.role === 'editor' || userDetails.role === 'admin'
                 ? () => setStatusArticleId && setStatusArticleId(article.id)
                 : () => {}
             }
           >
-            {article.status}
+            <span>
+              {article.status}
+              {userDetails.role === 'author' &&
+                article.status === StatusEnum.app && (
+                  <button className='publish_btn' onClick={handlePublishClick}>
+                    Publish
+                  </button>
+                )}
+            </span>
           </button>
         )}
 

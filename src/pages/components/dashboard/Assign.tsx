@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../../../context';
 import { useAppSelector, useAppDispatch } from '../../../app/store';
-import { ArticleInfoInt, AssignTypeEnum, UserInfoInt } from '../../../types';
+import {
+  ArticleInfoInt,
+  AssignTypeEnum,
+  StatusEnum,
+  UserInfoInt,
+} from '../../../types';
 import { assignTeam } from '../../../features/article/articleAsyncuThunk';
 import { articleSlice } from '../../../features/article/articleSlice';
 import { toast } from 'react-toastify';
@@ -27,6 +32,9 @@ const Assign: React.FC<AssignInt> = ({ assignType }) => {
   const [assignedEdits, setAssignedEdits] = useState<UserInfoInt[]>([]);
   const [currentArticles, setCurrentArticles] = useState<ArticleInfoInt[]>([]);
   const [selectedOpts, setSelectedOpts] = useState<string[]>([]);
+  const [displayArticle, setDisplayArticle] = useState<ArticleInfoInt | null>(
+    null
+  );
 
   const { setIsReload } = useGlobalContext();
 
@@ -76,6 +84,11 @@ const Assign: React.FC<AssignInt> = ({ assignType }) => {
 
       switch (assignType) {
         case AssignTypeEnum.rev:
+          setDisplayArticle(
+            currentArticles.find(
+              (article) => article.id === reviewersArticleId
+            )!
+          );
           currentArticles
             .find((article) => article.id === reviewersArticleId)
             ?.assReviewers.forEach((id) => {
@@ -88,6 +101,9 @@ const Assign: React.FC<AssignInt> = ({ assignType }) => {
           break;
 
         case AssignTypeEnum.edi:
+          setDisplayArticle(
+            currentArticles.find((article) => article.id === editorsArticleId)!
+          );
           currentArticles
             .find((article) => article?.id === editorsArticleId)
             ?.assEditors.forEach((id) => {
@@ -193,21 +209,24 @@ const Assign: React.FC<AssignInt> = ({ assignType }) => {
         </div>
       </div>
 
-      <button
-        className='update_btn'
-        onClick={handleUpdate}
-        style={
-          isAssigningTeam || userDetails.role !== 'admin'
-            ? {
-                opacity: '0.5',
-                cursor: 'not-allowed',
-              }
-            : {}
-        }
-        disabled={isAssigningTeam || userDetails.role !== 'admin'}
-      >
-        {isAssigningTeam ? 'Updating...' : 'Update'}
-      </button>
+      {displayArticle?.status === StatusEnum.sub ||
+        (displayArticle?.status === StatusEnum.rev && (
+          <button
+            className='update_btn'
+            onClick={handleUpdate}
+            style={
+              isAssigningTeam || userDetails.role !== 'admin'
+                ? {
+                    opacity: '0.5',
+                    cursor: 'not-allowed',
+                  }
+                : {}
+            }
+            disabled={isAssigningTeam || userDetails.role !== 'admin'}
+          >
+            {isAssigningTeam ? 'Updating...' : 'Update'}
+          </button>
+        ))}
     </>
   );
 };

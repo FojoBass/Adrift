@@ -55,19 +55,23 @@ interface ContextInt {
   justLoggedOut?: boolean;
   setJustLoggedOut?: React.Dispatch<React.SetStateAction<boolean>>;
   superAppLoading?: boolean;
-  setAffirm?: React.Dispatch<React.SetStateAction<boolean>>;
-  affirm?: boolean;
+  setAffirm?: React.Dispatch<
+    React.SetStateAction<{ state: boolean; type: string }>
+  >;
+  affirm?: { state: boolean; type: string };
   setSendMail?: React.Dispatch<
     React.SetStateAction<{
       state: boolean;
       type: MailEnum;
       id?: string;
+      refId?: string;
     }>
   >;
   sendMail?: {
     state: boolean;
     type: MailEnum;
     id?: string;
+    refId?: string;
   };
   verDisplayArticle?: ArticleInfoInt | null;
   setVerDisplayArticle?: React.Dispatch<
@@ -79,11 +83,13 @@ interface ContextInt {
     React.SetStateAction<{
       isShow: boolean;
       msg: string;
+      type: string;
     }>
   >;
   confirmations?: {
     isShow: boolean;
     msg: string;
+    type: string;
   };
 }
 
@@ -125,8 +131,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [confirmations, setConfirmations] = useState({
     isShow: false,
     msg: '',
+    type: '',
   });
-  const [affirm, setAffirm] = useState(false);
+  const [affirm, setAffirm] = useState({ state: false, type: '' });
 
   const getVerificationLink = async () => {
     try {

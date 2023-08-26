@@ -52,8 +52,8 @@ const Status: React.FC<StatusPropInt> = ({ roleArticles }) => {
       setConfirmations &&
         setConfirmations(
           selectedStatus === 'approved'
-            ? { isShow: true, msg: 'approve' }
-            : { isShow: true, msg: 'reject' }
+            ? { isShow: true, msg: 'approve', type: 'status' }
+            : { isShow: true, msg: 'reject', type: 'status' }
         );
     }
   };
@@ -90,20 +90,23 @@ const Status: React.FC<StatusPropInt> = ({ roleArticles }) => {
   }, [justUpdatedStatus, isUpdatingStatusFailed]);
 
   useEffect(() => {
-    if (affirm && selectedStatus) {
+    if (affirm?.type === 'status' && selectedStatus) {
       dispatch(
         updateStatus({
           status: selectedStatus ?? '',
           articleId: statusArticleId ?? '',
         })
       );
+
+      console.log('TEST');
+
       setSendMail &&
         setSendMail(
           selectedStatus === 'approved'
             ? { state: true, type: MailEnum.appArt, id: statusArticleId ?? '' }
             : { state: true, type: MailEnum.rejArt, id: statusArticleId ?? '' }
         );
-      setAffirm && setAffirm(false);
+      setAffirm && setAffirm({ state: false, type: '' });
       setIsReload && setIsReload(true);
     }
   }, [affirm, selectedStatus, setAffirm]);

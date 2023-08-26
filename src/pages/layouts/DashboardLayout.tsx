@@ -54,6 +54,7 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
     justLoggedOut,
     isReload,
     setIsReload,
+    setConfirmations,
   } = useGlobalContext();
 
   const navigate = useNavigate();
@@ -207,6 +208,20 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
             <select className='pagination'>
               <option value='1'>Page 1</option>
             </select>
+
+            <button
+              className='publish_art_btn'
+              onClick={() =>
+                setConfirmations &&
+                setConfirmations({
+                  isShow: true,
+                  msg: 'publish all pending articles',
+                  type: 'publish',
+                })
+              }
+            >
+              Publish Vol.
+            </button>
           </footer>
         </aside>
       </div>

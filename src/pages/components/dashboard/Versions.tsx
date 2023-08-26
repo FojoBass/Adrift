@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DashBoardOverlayLayout from '../../layouts/DashBoardOverlayLayout';
 import { useAppSelector, useAppDispatch } from '../../../app/store';
-import { ArticleInfoInt } from '../../../types';
+import { ArticleInfoInt, StatusEnum } from '../../../types';
 import { useGlobalContext } from '../../../context';
 import { timeConverter } from '../../../helpers/timeConverter';
 import { toast } from 'react-toastify';
@@ -119,28 +119,34 @@ const Versions = () => {
             })}
         </div>
 
-        <aside className='ver_right_side'>
-          {userDetails.role === 'author' && (
-            <button
-              className='upload_btn'
-              onClick={() => setisOpenSubModal({ state: true, type: 'upload' })}
-            >
-              New version
-            </button>
-          )}
-          {
-            <button
-              className='abstract_btn'
-              onClick={() =>
-                setisOpenSubModal({ state: true, type: 'abstract' })
+        {displayArticle?.status !== StatusEnum.pen &&
+          displayArticle?.status !== StatusEnum.pub &&
+          displayArticle?.status !== StatusEnum.rej && (
+            <aside className='ver_right_side'>
+              {userDetails.role === 'author' && (
+                <button
+                  className='upload_btn'
+                  onClick={() =>
+                    setisOpenSubModal({ state: true, type: 'upload' })
+                  }
+                >
+                  New version
+                </button>
+              )}
+              {
+                <button
+                  className='abstract_btn'
+                  onClick={() =>
+                    setisOpenSubModal({ state: true, type: 'abstract' })
+                  }
+                >
+                  {userDetails.role === 'author'
+                    ? 'Edit Abstract'
+                    : 'Show Abstract'}
+                </button>
               }
-            >
-              {userDetails.role === 'author'
-                ? 'Edit Abstract'
-                : 'Show Abstract'}
-            </button>
-          }
-        </aside>
+            </aside>
+          )}
       </div>
 
       {isOpenSubMdal.state && (

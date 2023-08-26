@@ -11,6 +11,11 @@
     background-color: $bg_main;
   }
 
+  &.approved_super_wrapper:hover .status_col .publish_btn {
+    opacity: 1;
+    z-index: 1;
+  }
+
   &.author_opt {
     grid-template-columns: 1.25fr 3fr 2fr 1fr 1.25fr 1fr;
   }
@@ -32,10 +37,53 @@
     text-align: center;
     @include flexDisplay(center, center);
     border-right: 1px solid $box_shd_tint;
+    // font-size: $txt_size1;
 
     &.status_col,
     &.categ_col {
       text-transform: capitalize;
+    }
+
+    &.status_col {
+      font-size: $txt_size1;
+    }
+
+    &.status_col span {
+      padding: 5px 8px;
+      border-radius: $brd_rad_small;
+      overflow: hidden;
+    }
+
+    &.rejected span {
+      background-color: $spc_clr;
+      color: $txt_clr2;
+    }
+
+    &.approved span {
+      background-color: rgb(0, 124, 128);
+      color: $txt_clr2;
+      position: relative;
+
+      .publish_btn {
+        @include position(absolute, left, top, 50%, 50%);
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        background-color: $acc_clr;
+        opacity: 0;
+        z-index: -1;
+        @include transitionAll($vfast_trans);
+      }
+    }
+
+    &.reviewing span {
+      background-color: $txt_clr3;
+      color: $txt_clr2;
+    }
+
+    &.pending span {
+      background-color: rgb(201, 201, 0);
+      color: $txt_clr2;
     }
 
     &:last-child {

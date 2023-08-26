@@ -128,8 +128,9 @@ export enum StatusEnum {
   sub = 'submitted',
   rev = 'reviewing',
   rej = 'rejected',
-  acc = 'accepted',
+  app = 'approved',
   pub = 'published',
+  pen = 'pending',
 }
 
 export enum AssignTypeEnum {
@@ -140,4 +141,5 @@ export enum AssignTypeEnum {
 export enum MailEnum {
   appArt = 'approve article',
   rejArt = 'reject article',
+  pubArt = 'publish article',
 }

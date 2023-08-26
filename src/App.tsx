@@ -73,9 +73,8 @@ function App() {
   const dispatch = useAppDispatch();
   const { isLoggedIn, isAlreadyAuth, isAlreadyReg, userDetails } =
     useAppSelector((state) => state.user);
-  const { isFirstEnter, editorArticles, allArticles } = useAppSelector(
-    (state) => state.article
-  );
+  const { isFirstEnter, editorArticles, allArticles, authorArticles } =
+    useAppSelector((state) => state.article);
 
   const eduJournServices = new EduJournServices();
 
@@ -292,6 +291,8 @@ function App() {
       let article =
         userDetails.role === 'admin'
           ? allArticles.find((article) => article.id === sendMail.id)!
+          : userDetails.role === 'author'
+          ? authorArticles.find((article) => article.id === sendMail.id)!
           : editorArticles.find((article) => article.id === sendMail.id)!;
 
       switch (sendMail.type) {
@@ -312,10 +313,10 @@ function App() {
               process.env.REACT_APP_EMAIL_PUBLIC_KEY ?? ''
             )
             .then((response) => {
-              console.log('Approval Email sent successfully:', response);
+              toast.success('Approval mail sent');
             })
             .catch((error) => {
-              console.error('Error sending Approval email:', error);
+              toast.error('Approval mail not sent');
             });
           break;
 
@@ -336,10 +337,34 @@ function App() {
               process.env.REACT_APP_EMAIL_PUBLIC_KEY ?? ''
             )
             .then((response) => {
-              console.log('Rejection Email sent successfully:', response);
+              toast.success('Approval mail sent');
             })
             .catch((error) => {
-              console.error('Error sending Rejection email:', error);
+              toast.error('Approval mail not sent');
+            });
+          break;
+
+        case MailEnum.pubArt:
+          const pubProps = {
+            article_id: article.id,
+            article_title: article.title,
+            ref_id: sendMail.refId,
+            author_name: article.author,
+            author_email: article.email,
+          };
+
+          emailjs
+            .send(
+              process.env.REACT_APP_EMAIL_SERVICE_ID2 ?? '',
+              process.env.REACT_APP_EMAIL_PUBLISH_TEMPLATE_ID ?? '',
+              pubProps,
+              process.env.REACT_APP_EMAIL_PUBLIC_KEY2 ?? ''
+            )
+            .then((response) => {
+              console.log('Publish Email sent successfully:', response);
+            })
+            .catch((error) => {
+              console.error('Publish sending Rejection email:', error);
             });
           break;
 
@@ -348,7 +373,7 @@ function App() {
       }
       setSendMail && setSendMail({ state: false, type: MailEnum.appArt });
     }
-  }, [sendMail, editorArticles, setSendMail, allArticles]);
+  }, [sendMail, setSendMail]);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
