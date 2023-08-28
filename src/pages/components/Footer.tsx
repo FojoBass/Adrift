@@ -1,8 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { quickLinks, socialLinks } from '../../data';
+import { useAppSelector } from '../../app/store';
+import { ArticleInfoInt } from '../../types';
+import { timeConverter } from '../../helpers/timeConverter';
 
 const Footer = () => {
+  const { publishedArticles } = useAppSelector((state) => state.article);
+  const [otherArticles, setOtherArticles] = useState<ArticleInfoInt[]>([]);
+
+  useEffect(() => {
+    if (!otherArticles.length) {
+      let modArticles: ArticleInfoInt[] = [];
+      let randInds: number[] = [];
+
+      for (let i = 0; i < 3; i++) {
+        const randInd = Math.floor(Math.random() * publishedArticles.length);
+
+        if (randInds.find((ind) => ind === randInd)) continue;
+        else randInds.push(randInd);
+
+        modArticles.push(publishedArticles[randInd]);
+        setOtherArticles(modArticles);
+      }
+    }
+  }, [publishedArticles, otherArticles]);
+
   return (
     <footer id='footer_sect'>
       <div className='top'>
@@ -34,19 +57,29 @@ const Footer = () => {
           <article className='footer_opt_wrapper'>
             <h3>Some Articles</h3>
 
-            <Link to='/article/1234' className='articles_link'>
-              <span className='article_title'>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              </span>
-              <span className='created_at'>March 7, 1999</span>
-            </Link>
+            {otherArticles.map((article, index) => {
+              const artDate = timeConverter(article.publishedAt as string);
 
-            <Link to='/article/1234' className='articles_link'>
-              <span className='article_title'>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              </span>
-              <span className='created_at'>March 7, 1999</span>
-            </Link>
+              return (
+                <>
+                  <Link
+                    to={`/article/${article.id}`}
+                    className='articles_link'
+                    key={index}
+                  >
+                    <span className='article_title'>{article.title}</span>
+
+                    <span className='created_at'>
+                      {artDate.getDate()} /{' '}
+                      {String(artDate.getMonth()).length < 2
+                        ? `0${artDate.getMonth()}`
+                        : artDate.getMonth()}{' '}
+                      / {String(artDate.getFullYear()).slice(2)}
+                    </span>
+                  </Link>
+                </>
+              );
+            })}
 
             <Link to='/archives' className='view_all_btn'>
               View all articles

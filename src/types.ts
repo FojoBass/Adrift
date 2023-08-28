@@ -27,6 +27,7 @@ export interface DataInt {
   assReviewers: never[];
   assEditors: never[];
   email: string;
+  vol: number;
 }
 
 export interface VerDataInt {
@@ -103,6 +104,7 @@ export interface ArticleInfoInt {
   assReviewers: string[];
   assEditors: string[];
   email: string;
+  vol: number;
 }
 
 export interface FormDataInt {

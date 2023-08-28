@@ -3,7 +3,7 @@ import DashboardLayout from '../../layouts/DashboardLayout';
 import { useGlobalContext } from '../../../context';
 import { useAppSelector } from '../../../app/store';
 import DashBoardContents from './DashBoardContents';
-import { ArticleInfoInt } from '../../../types';
+import { ArticleInfoInt, PageSectEnum } from '../../../types';
 
 const ReviewerDashboard = () => {
   const header = useRef(['Id', 'Title', 'Category', 'Comments', 'Versions']);
@@ -15,7 +15,7 @@ const ReviewerDashboard = () => {
 
   const { reviewerArticles } = useAppSelector((state) => state.article);
   const [displayArticles, setDisplayArticles] = useState<ArticleInfoInt[]>([]);
-  const { pageSect } = useGlobalContext();
+  const { pageSect, setGrandModArticles } = useGlobalContext();
 
   useEffect(() => {
     let modDispArticles: ArticleInfoInt[];
@@ -34,6 +34,7 @@ const ReviewerDashboard = () => {
         return;
     }
 
+    setGrandModArticles && setGrandModArticles(modDispArticles);
     setDisplayArticles(modDispArticles);
   }, [pageSect, reviewerArticles]);
 

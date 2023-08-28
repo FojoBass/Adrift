@@ -1,8 +1,13 @@
 import { UserCredential } from 'firebase/auth';
-import { EduJournServices } from './../../services/EduJournServices';
+import {
+  EduJournServices,
+  usersColRef,
+} from './../../services/EduJournServices';
 import { UserInfoInt } from './../../types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { uploadImg } from '../../helpers/firebaseFunctions';
+import { DocumentData, onSnapshot, query, where } from 'firebase/firestore';
+import { userSlice } from './userSlice';
 
 interface RegisterUserPayloadInt extends UserInfoInt {
   password: string;
@@ -71,7 +76,7 @@ export const signInUser = createAsyncThunk<
   }
 });
 
-export const getUserInfo = createAsyncThunk<UserInfoInt, { email: string }>(
+export const getUserInfo = createAsyncThunk<void, { email: string }>(
   'user/userInfo',
   async (payload, thunkApi) => {
     const { email } = payload;
@@ -79,12 +84,53 @@ export const getUserInfo = createAsyncThunk<UserInfoInt, { email: string }>(
       const role: string = sessionStorage.getItem('userRole')
         ? JSON.parse(sessionStorage.getItem('userRole') as string)
         : '';
-      const userInfo = await eduJournServices.getLoggedInUserInfo(email, role);
-      return userInfo.docs[0].data() as UserInfoInt;
+      const snapQuery = query(
+        usersColRef,
+        where('email', '==', email),
+        where('role', '==', role)
+      );
+
+      const { setUserDetails } = userSlice.actions;
+
+      const unsub = onSnapshot(snapQuery, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const userData = doc.data();
+
+          thunkApi.dispatch(setUserDetails(userData));
+        });
+      });
     } catch (error) {
       console.log('getUserInfo error');
 
       return thunkApi.rejectWithValue(`User fetch ${error}`);
+    }
+  }
+);
+
+export const updateUserInfo = createAsyncThunk<
+  void,
+  {
+    name: string;
+    title: string;
+    dept: string;
+    affiliation: string;
+    id: string;
+  }
+>('user/updateUserInfo', async (payload, thunkApi) => {
+  try {
+    await eduJournServices.updateUserInfo(payload);
+  } catch (error) {
+    thunkApi.rejectWithValue(`Info update ${error}`);
+  }
+});
+
+export const updatePassWord = createAsyncThunk<void, { password: string }>(
+  'user/updatePassword',
+  async (payload, thunkApi) => {
+    try {
+      await eduJournServices.updateUserPassword(payload.password);
+    } catch (error) {
+      thunkApi.rejectWithValue(`Password update ${error}`);
     }
   }
 );

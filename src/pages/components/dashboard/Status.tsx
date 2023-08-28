@@ -46,8 +46,6 @@ const Status: React.FC<StatusPropInt> = ({ roleArticles }) => {
           articleId: statusArticleId ?? '',
         })
       );
-
-      setIsReload && setIsReload(true);
     } else {
       setConfirmations &&
         setConfirmations(
@@ -98,8 +96,6 @@ const Status: React.FC<StatusPropInt> = ({ roleArticles }) => {
         })
       );
 
-      console.log('TEST');
-
       setSendMail &&
         setSendMail(
           selectedStatus === 'approved'
@@ -107,7 +103,6 @@ const Status: React.FC<StatusPropInt> = ({ roleArticles }) => {
             : { state: true, type: MailEnum.rejArt, id: statusArticleId ?? '' }
         );
       setAffirm && setAffirm({ state: false, type: '' });
-      setIsReload && setIsReload(true);
     }
   }, [affirm, selectedStatus, setAffirm]);
 

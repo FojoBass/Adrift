@@ -25,7 +25,7 @@ import Submit from './pages/Submit';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/components/dashboard/AdminDashboard';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './services/firbase_config';
+import { auth, db } from './services/firbase_config';
 import { useAppSelector, useAppDispatch } from './app/store';
 import { userSlice } from './features/user/userSlice';
 import { getUserInfo } from './features/user/userAsyncThunk';
@@ -34,6 +34,7 @@ import Verification from './pages/components/Verification';
 import { useGlobalContext } from './context';
 import {
   DocumentData,
+  collection,
   onSnapshot,
   orderBy,
   query,
@@ -45,9 +46,13 @@ import {
   usersColRef,
 } from './services/EduJournServices';
 import { articleSlice } from './features/article/articleSlice';
-import { MailEnum } from './types';
+import { MailEnum, VerUrlsInt } from './types';
 import Confirmations from './pages/components/Confirmations';
 import emailjs from '@emailjs/browser';
+import {
+  getVolumeCount,
+  publishArticle,
+} from './features/article/articleAsyncuThunk';
 
 // ! ADD A 'Scroll to Top' BUTTON. DO NOT FORGET
 
@@ -66,15 +71,24 @@ function App() {
     setAllArticles,
     setArticleLoading,
     resetIsFirstEnter,
+    setIsFirstArticleFetch,
+    setVersions,
   } = articleSlice.actions;
 
-  const { sendMail, setSendMail } = useGlobalContext();
+  const { sendMail, setSendMail, setIsReload } = useGlobalContext();
 
   const dispatch = useAppDispatch();
   const { isLoggedIn, isAlreadyAuth, isAlreadyReg, userDetails } =
     useAppSelector((state) => state.user);
-  const { isFirstEnter, editorArticles, allArticles, authorArticles } =
-    useAppSelector((state) => state.article);
+  const {
+    isFirstEnter,
+    editorArticles,
+    allArticles,
+    authorArticles,
+    reviewerArticles,
+    isFirstArticleFetch,
+    publishedArticles,
+  } = useAppSelector((state) => state.article);
 
   const eduJournServices = new EduJournServices();
 
@@ -107,36 +121,10 @@ function App() {
   }, [isAlreadyAuth, isAlreadyReg]);
 
   useEffect(() => {
-    let unsubPub: () => void;
     let unsubRole: () => void;
     let unsubTeam: () => void;
     if (isLoggedIn) {
       isFirstEnter && dispatch(setArticleLoading(true));
-
-      // *Published Articles
-      unsubPub = onSnapshot(
-        query(
-          articlesColRef,
-          where('status', '==', 'published'),
-          orderBy('publishedAt', 'desc')
-        ),
-        (querySnapshot) => {
-          let articles: DocumentData = [];
-
-          querySnapshot.forEach((doc) => {
-            const articleData = doc.data();
-
-            articles.push({
-              ...articleData,
-              createdAt: articleData.createdAt
-                ? articleData.createdAt.toDate().toISOString()
-                : '',
-            });
-          });
-
-          dispatch(setPublishedArticles(articles));
-        }
-      );
 
       switch (userDetails.role) {
         case 'author':
@@ -154,10 +142,14 @@ function App() {
                 articles.push({
                   ...articleData,
                   createdAt: articleData.createdAt
-                    ? articleData.createdAt.toDate().toISOString()
+                    ? articleData.createdAt.toDate().toString()
+                    : '',
+                  publishedAt: articleData.publishedAt
+                    ? articleData.publishedAt.toDate().toString()
                     : '',
                 });
               });
+              setIsReload && setIsReload(true);
 
               dispatch(setAuthorArticles(articles));
               dispatch(setArticleLoading(false));
@@ -181,10 +173,14 @@ function App() {
                 articles.push({
                   ...articleData,
                   createdAt: articleData.createdAt
-                    ? articleData.createdAt.toDate().toISOString()
+                    ? articleData.createdAt.toDate().toString()
+                    : '',
+                  publishedAt: articleData.publishedAt
+                    ? articleData.publishedAt.toDate().toString()
                     : '',
                 });
               });
+              setIsReload && setIsReload(true);
 
               dispatch(setEditorArticles(articles));
             }
@@ -223,10 +219,14 @@ function App() {
                 articles.push({
                   ...articleData,
                   createdAt: articleData.createdAt
-                    ? articleData.createdAt.toDate().toISOString()
+                    ? articleData.createdAt.toDate().toString()
+                    : '',
+                  publishedAt: articleData.publishedAt
+                    ? articleData.publishedAt.toDate().toString()
                     : '',
                 });
               });
+              setIsReload && setIsReload(true);
 
               dispatch(setReviewerArticles(articles));
               dispatch(setArticleLoading(false));
@@ -247,10 +247,14 @@ function App() {
                 articles.push({
                   ...articleData,
                   createdAt: articleData.createdAt
-                    ? articleData.createdAt.toDate().toISOString()
+                    ? articleData.createdAt.toDate().toString()
+                    : '',
+                  publishedAt: articleData.publishedAt
+                    ? articleData.publishedAt.toDate().toString()
                     : '',
                 });
               });
+              setIsReload && setIsReload(true);
 
               dispatch(setAllArticles(articles));
             }
@@ -280,7 +284,6 @@ function App() {
     }
 
     return () => {
-      unsubPub?.();
       unsubRole?.();
       unsubTeam?.();
     };
@@ -374,6 +377,50 @@ function App() {
       setSendMail && setSendMail({ state: false, type: MailEnum.appArt });
     }
   }, [sendMail, setSendMail]);
+
+  useEffect(() => {
+    dispatch(getVolumeCount());
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    let unsubPub: () => void;
+    dispatch(setArticleLoading(true));
+
+    // *Published Articles
+    unsubPub = onSnapshot(
+      query(
+        articlesColRef,
+        where('status', '==', 'published'),
+        orderBy('publishedAt', 'desc')
+      ),
+      (querySnapshot) => {
+        let articles: DocumentData = [];
+
+        querySnapshot.forEach((doc) => {
+          const articleData = doc.data();
+
+          articles.push({
+            ...articleData,
+            createdAt: articleData.createdAt
+              ? articleData.createdAt.toDate().toString()
+              : '',
+            publishedAt: articleData.publishedAt
+              ? articleData.publishedAt.toDate().toString()
+              : '',
+          });
+        });
+
+        dispatch(setPublishedArticles(articles));
+        dispatch(setArticleLoading(false));
+      }
+    );
+
+    return () => unsubPub?.();
+  }, []);
+
+  useEffect(() => {
+    console.log('publishedArticles: ', publishedArticles);
+  }, []);
 
   const router = createBrowserRouter(
     createRoutesFromElements(

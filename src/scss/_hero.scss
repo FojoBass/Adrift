@@ -26,15 +26,16 @@
 
     .post_info {
       margin: auto;
-      background-color: $spc_clr_tint;
+      background-color: darken($spc_clr_tint, 20);
       padding: 20px 0;
       text-align: center;
       @include flexDisplay(center, center, column);
       color: $txt_clr2;
+      width: 70%;
 
       .title,
       .desc {
-        width: 70%;
+        width: 80%;
       }
 
       .title {
@@ -50,6 +51,9 @@
 
       a {
         text-decoration: underline;
+        color: $txt_clr1;
+        color: $spc_clr;
+        font-weight: bold;
       }
     }
   }

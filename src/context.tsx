@@ -5,7 +5,7 @@ import { EduJournServices } from './services/EduJournServices';
 import { toast } from 'react-toastify';
 import { useAppSelector } from './app/store';
 import { FieldValue } from 'firebase/firestore';
-import { ArticleInfoInt, MailEnum, PageSectEnum } from './types';
+import { ArticleInfoInt, MailEnum, PageSectEnum, StatusEnum } from './types';
 
 // todo DELTE THESE INTERFACES
 interface CommentInt {
@@ -91,6 +91,16 @@ interface ContextInt {
     msg: string;
     type: string;
   };
+  setDashPageNumber?: React.Dispatch<React.SetStateAction<number>>;
+  dashPageNumber?: number;
+  setDashStatusFilter?: React.Dispatch<
+    React.SetStateAction<StatusEnum | 'all'>
+  >;
+  dashStatusFilter?: StatusEnum | 'all';
+  setDashArticlesPerPage?: React.Dispatch<React.SetStateAction<number>>;
+  dashArticlesPerPage?: number;
+  grandModArticles?: ArticleInfoInt[];
+  setGrandModArticles?: React.Dispatch<React.SetStateAction<ArticleInfoInt[]>>;
 }
 
 // * This enum is for the sections on the dashboard
@@ -134,6 +144,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     type: '',
   });
   const [affirm, setAffirm] = useState({ state: false, type: '' });
+
+  const [dashStatusFilter, setDashStatusFilter] = useState<StatusEnum | 'all'>(
+    'all'
+  );
+  const [dashPageNumber, setDashPageNumber] = useState<number>(1);
+
+  const [dashArticlesPerPage, setDashArticlesPerPage] = useState<number>(10);
+
+  const [grandModArticles, setGrandModArticles] = useState<ArticleInfoInt[]>(
+    []
+  );
 
   const getVerificationLink = async () => {
     try {
@@ -196,6 +217,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     affirm,
     sendMail,
     setSendMail,
+    dashStatusFilter,
+    setDashStatusFilter,
+    dashPageNumber,
+    setDashPageNumber,
+    dashArticlesPerPage,
+    setDashArticlesPerPage,
+    grandModArticles,
+    setGrandModArticles,
   };
 
   useEffect(() => {

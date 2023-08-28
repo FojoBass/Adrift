@@ -252,8 +252,6 @@ const SubModal: React.FC<SubModalPropInt> = ({ type, article, closeModal }) => {
       dispatch(
         updateAbstract({ abstract: abstract ?? '', articleId: article!.id })
       );
-
-      setIsReload && setIsReload(true);
     }
   };
 

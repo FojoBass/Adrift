@@ -86,6 +86,11 @@
       color: $txt_clr2;
     }
 
+    &.published span {
+      background-color: green;
+      color: $txt_clr2;
+    }
+
     &:last-child {
       border: none;
     }

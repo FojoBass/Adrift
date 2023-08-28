@@ -36,6 +36,10 @@ interface InitialStateInt {
   isUpdatingAbstractFailed: boolean;
   justUpdatedAbstract: boolean;
   initialLoading: boolean;
+  volCount: number;
+  isFirstArticleFetch: boolean;
+  isPublishing: boolean;
+  justPublished: boolean;
 }
 
 const initialState: InitialStateInt = {
@@ -64,6 +68,10 @@ const initialState: InitialStateInt = {
   isUpdatingAbstractFailed: false,
   justUpdatedAbstract: false,
   initialLoading: true,
+  volCount: 0,
+  isFirstArticleFetch: true,
+  isPublishing: false,
+  justPublished: false,
 };
 
 const versionsSetter = (
@@ -248,7 +256,6 @@ export const articleSlice = createSlice({
       const { versions, role, id } = action.payload;
 
       const modVersions = versions as VerUrlsInt[];
-
       switch (role) {
         case 'author':
           state.authorArticles = versionsSetter(
@@ -271,6 +278,13 @@ export const articleSlice = createSlice({
             modVersions
           );
           break;
+        case 'published':
+          state.publishedArticles = versionsSetter(
+            state.publishedArticles,
+            id,
+            modVersions
+          );
+          break;
         default:
           state.allArticles = versionsSetter(
             state.allArticles,
@@ -282,6 +296,18 @@ export const articleSlice = createSlice({
     },
     setInitialLoading(state, action) {
       state.initialLoading = action.payload;
+    },
+    setVolCount(state, action) {
+      state.volCount = action.payload as number;
+    },
+    setIsFirstArticleFetch(state, action) {
+      state.isFirstArticleFetch = action.payload;
+    },
+    setIsPublishing(state, action) {
+      state.isPublishing = action.payload;
+    },
+    setJustPublished(state, action) {
+      state.justPublished = true;
     },
   },
   extraReducers: (builder) => {

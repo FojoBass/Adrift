@@ -75,7 +75,6 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
       })
     );
 
-    setIsReload && setIsReload(true);
     toast.success('Payment successful');
 
     setSendMail &&
@@ -298,12 +297,20 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
         {userDetails.role !== 'reviewer' && (
           <button
             className={`status_col col ${
-              userDetails.role === 'editor' || userDetails.role === 'admin'
+              (userDetails.role === 'editor' || userDetails.role === 'admin') &&
+              article.status !== 'published' &&
+              article.status !== 'approved'
+                ? 'hover'
+                : article.status === 'approved' && userDetails.role === 'admin'
                 ? 'hover'
                 : ''
             } ${article.status}`}
             onClick={
-              userDetails.role === 'editor' || userDetails.role === 'admin'
+              (userDetails.role === 'editor' || userDetails.role === 'admin') &&
+              article.status !== 'published' &&
+              article.status !== 'approved'
+                ? () => setStatusArticleId && setStatusArticleId(article.id)
+                : article.status === 'approved' && userDetails.role === 'admin'
                 ? () => setStatusArticleId && setStatusArticleId(article.id)
                 : () => {}
             }

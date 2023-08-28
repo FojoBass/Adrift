@@ -1,20 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import DashboardLayout from '../../layouts/DashboardLayout';
-import { v4 } from 'uuid';
-import ShortUniqueId from 'short-unique-id';
 import { useGlobalContext } from '../../../context';
-import { articleSlice } from '../../../features/article/articleSlice';
-import { useAppSelector, useAppDispatch } from '../../../app/store';
-import {
-  DocumentData,
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-} from 'firebase/firestore';
-import { db } from '../../../services/firbase_config';
+import { useAppSelector } from '../../../app/store';
 import DashBoardContents from './DashBoardContents';
-import { ArticleInfoInt } from '../../../types';
+import { ArticleInfoInt, StatusEnum } from '../../../types';
 
 // TODO ENSURE TO HOOK UP displayArticles TO pageSect
 
@@ -29,7 +18,14 @@ const AdminDashboard = () => {
     "Rev'ers",
     'Editors',
   ]);
-  const { pageSect } = useGlobalContext();
+  const {
+    pageSect,
+    dashStatusFilter,
+    dashPageNumber,
+    dashArticlesPerPage,
+    setIsReload,
+    setGrandModArticles,
+  } = useGlobalContext();
 
   // ? Author comment contains comments between editor(s) and author
   // ? Reviewers comment contains comments between editor(s) and reviewwers
@@ -40,30 +36,85 @@ const AdminDashboard = () => {
   const [displayArticles, setDisplayArticles] = useState<ArticleInfoInt[]>([]);
 
   useEffect(() => {
-    let modDispArticles: ArticleInfoInt[];
-    switch (pageSect) {
-      case 'all':
-        modDispArticles = allArticles;
-        break;
+    if (dashPageNumber && dashArticlesPerPage) {
+      let modDispArticles: ArticleInfoInt[];
+      switch (pageSect) {
+        case 'all':
+          modDispArticles = allArticles;
+          break;
 
-      case 'rev':
-        modDispArticles = allArticles.filter(
-          (article) => article.status === 'reviewing'
-        );
-        break;
+        case 'rev':
+          modDispArticles = allArticles.filter(
+            (article) => article.status === 'reviewing'
+          );
+          break;
 
-      case 'sub':
-        modDispArticles = allArticles.filter(
-          (article) => article.status === 'submitted'
-        );
-        break;
+        case 'sub':
+          modDispArticles = allArticles.filter(
+            (article) => article.status === 'submitted'
+          );
+          break;
 
-      default:
-        return;
+        default:
+          return;
+      }
+
+      switch (dashStatusFilter) {
+        case 'all':
+          break;
+        case StatusEnum.sub:
+          modDispArticles = modDispArticles.filter(
+            (art) => art.status === StatusEnum.sub
+          );
+          break;
+        case StatusEnum.rev:
+          modDispArticles = modDispArticles.filter(
+            (art) => art.status === StatusEnum.rev
+          );
+          break;
+        case StatusEnum.rej:
+          modDispArticles = modDispArticles.filter(
+            (art) => art.status === StatusEnum.rej
+          );
+          break;
+        case StatusEnum.app:
+          modDispArticles = modDispArticles.filter(
+            (art) => art.status === StatusEnum.app
+          );
+          break;
+        case StatusEnum.pen:
+          modDispArticles = modDispArticles.filter(
+            (art) => art.status === StatusEnum.pen
+          );
+          break;
+        case StatusEnum.pub:
+          modDispArticles = modDispArticles.filter(
+            (art) => art.status === StatusEnum.pub
+          );
+          break;
+
+        default:
+          return;
+      }
+      const start = dashArticlesPerPage * (dashPageNumber - 1);
+      const end = start + dashArticlesPerPage;
+
+      setGrandModArticles && setGrandModArticles(modDispArticles);
+
+      setDisplayArticles(modDispArticles.slice(start, end));
+      setDisplayArticles(modDispArticles.slice(start, end));
     }
+  }, [
+    pageSect,
+    allArticles,
+    dashPageNumber,
+    dashStatusFilter,
+    dashArticlesPerPage,
+  ]);
 
-    setDisplayArticles(modDispArticles);
-  }, [pageSect, allArticles]);
+  useEffect(() => {
+    setIsReload && setIsReload(true);
+  }, [dashStatusFilter, dashPageNumber]);
 
   return (
     <DashboardLayout headerContent={header.current}>

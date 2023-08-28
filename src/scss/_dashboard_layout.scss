@@ -17,6 +17,7 @@
       .top_side {
         height: 100px;
         @include flexDisplay(center, center, column);
+        text-align: center;
 
         .user_name {
           color: $acc_clr;

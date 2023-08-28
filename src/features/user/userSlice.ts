@@ -1,6 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { v4 } from 'uuid';
-import { registerUser, signInUser, getUserInfo } from './userAsyncThunk';
+import {
+  registerUser,
+  signInUser,
+  getUserInfo,
+  updateUserInfo,
+  updatePassWord,
+} from './userAsyncThunk';
 import { UserInfoInt } from '../../types';
 
 interface IntialStateInt {
@@ -17,7 +23,12 @@ interface IntialStateInt {
   isAlreadyReg: boolean;
   isAddingTeam: boolean;
   setIsLoggedInFalse: boolean;
-  // isJustAddedTeam: boolean;
+  updatingInfo: boolean;
+  justUpdatedInfo: boolean;
+  updatingFailed: boolean;
+  justUpdatePassword: boolean;
+  updatingPasswordFailed: boolean;
+  updatingPassword: boolean;
 }
 
 const initialState: IntialStateInt = {
@@ -43,7 +54,12 @@ const initialState: IntialStateInt = {
   isAlreadyReg: false,
   isAddingTeam: false,
   setIsLoggedInFalse: false, //* This is for delayed set
-  // isJustAddedTeam: true,
+  updatingInfo: false,
+  justUpdatedInfo: false,
+  updatingFailed: false,
+  justUpdatePassword: false,
+  updatingPasswordFailed: false,
+  updatingPassword: false,
 };
 
 export const userSlice = createSlice({
@@ -76,6 +92,21 @@ export const userSlice = createSlice({
     },
     setTeamInfo(state, action) {
       state.teamInfo = action.payload;
+    },
+    resetJustUpdated(state, action) {
+      state.justUpdatedInfo = false;
+    },
+    resetUpdatingFailed(state, action) {
+      state.updatingFailed = false;
+    },
+    resetUpdatingPasswordFailed(state, action) {
+      state.updatingPasswordFailed = false;
+    },
+    setUserDetails(state, action) {
+      state.userDetails = action.payload;
+    },
+    resetJustUpdatePassword(state, action) {
+      state.justUpdatePassword = false;
     },
   },
   extraReducers: (builder) => {
@@ -120,7 +151,6 @@ export const userSlice = createSlice({
         state.userAppLoading = true;
       })
       .addCase(getUserInfo.fulfilled, (state, action) => {
-        state.userDetails = action.payload;
         state.isLoggedIn = true;
         state.userAppLoading = false;
       })
@@ -128,6 +158,32 @@ export const userSlice = createSlice({
         state.userAppLoading = false;
         state.appError = 'App loading failed';
         console.log(error);
+      });
+    // *Update User
+    builder
+      .addCase(updateUserInfo.pending, (state) => {
+        state.updatingInfo = true;
+      })
+      .addCase(updateUserInfo.fulfilled, (state, action) => {
+        state.justUpdatedInfo = true;
+        state.updatingInfo = false;
+      })
+      .addCase(updateUserInfo.rejected, (state, error) => {
+        console.log(error);
+        state.updatingInfo = true;
+      });
+    // *Update Password
+    builder
+      .addCase(updatePassWord.pending, (state) => {
+        state.updatingPassword = true;
+      })
+      .addCase(updatePassWord.fulfilled, (state, action) => {
+        state.justUpdatePassword = true;
+        state.updatingPassword = false;
+      })
+      .addCase(updatePassWord.rejected, (state, error) => {
+        console.log(error);
+        state.updatingPassword = false;
       });
   },
 });

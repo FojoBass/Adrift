@@ -77,17 +77,13 @@
           .date_range_wrapper {
             @include flexDisplay(center, space-between);
 
-            .from_wrapper {
-              border-right: 2px dashed $box_shd;
-            }
-
             .to_wrapper {
               text-align: right;
             }
 
             .from_wrapper,
             .to_wrapper {
-              flex-basis: 50%;
+              width: 45%;
 
               h3 {
                 font-size: $txt_size2;
@@ -100,6 +96,7 @@
                 border: 2px solid $box_shd_tint;
                 padding: 10px;
                 cursor: pointer;
+                width: 100%;
               }
             }
           }

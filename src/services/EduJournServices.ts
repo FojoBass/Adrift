@@ -15,6 +15,7 @@ import {
   signOut,
   sendEmailVerification,
   signInWithEmailAndPassword,
+  updatePassword,
 } from 'firebase/auth';
 import {
   setDoc,
@@ -25,6 +26,8 @@ import {
   where,
   orderBy,
   updateDoc,
+  getDoc,
+  serverTimestamp,
 } from 'firebase/firestore';
 import ShortUniqueId from 'short-unique-id';
 
@@ -50,6 +53,10 @@ export class EduJournServices {
 
   EPSignIn(email: string, password: string) {
     return signInWithEmailAndPassword(auth, email, password);
+  }
+
+  updateUserPassword(password: string) {
+    return updatePassword(auth.currentUser!, password);
   }
 
   // *Storage Methods
@@ -89,6 +96,18 @@ export class EduJournServices {
   isUserRegistered(email: string) {
     const q = query(usersColRef, where('email', '==', email));
     return getDocs(q);
+  }
+
+  updateUserInfo(data: {
+    name: string;
+    title: string;
+    affiliation: string;
+    dept: string;
+    id: string;
+  }) {
+    const { name, title, affiliation, dept, id } = data;
+    const docRef = doc(db, `users/${id}`);
+    return updateDoc(docRef, { name, title, affiliation, dept });
   }
 
   // * Article
@@ -151,5 +170,24 @@ export class EduJournServices {
   getVersions(articleId: string) {
     const collectionRef = collection(db, `articles/${articleId}/versions`);
     return getDocs(collectionRef);
+  }
+
+  getVolumeCount() {
+    const docRef = doc(db, 'volume_count/vol');
+    return getDoc(docRef);
+  }
+
+  setVolumeCount(count: number) {
+    const docRef = doc(db, 'volume_count/vol');
+    return updateDoc(docRef, { count });
+  }
+
+  publishArticle(articleId: string, volCount: number) {
+    const docRef = doc(db, `articles/${articleId}`);
+    return updateDoc(docRef, {
+      status: 'published',
+      vol: volCount,
+      publishedAt: serverTimestamp(),
+    });
   }
 }

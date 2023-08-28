@@ -40,6 +40,11 @@
           margin-left: 10px;
           border-left: 1px solid $box_shd;
         }
+
+        .category {
+          text-transform: capitalize;
+          font-style: italic;
+        }
       }
     }
   }

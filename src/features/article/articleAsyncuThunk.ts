@@ -1,7 +1,14 @@
+import { ArticleInfoInt } from './../../types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { EduJournServices } from '../../services/EduJournServices';
 import { uploadFile } from '../../helpers/firebaseFunctions';
-import { serverTimestamp } from 'firebase/firestore';
+import {
+  DocumentData,
+  collection,
+  onSnapshot,
+  query,
+  serverTimestamp,
+} from 'firebase/firestore';
 import {
   AssingTeamPayloadInt,
   DataInt,
@@ -10,6 +17,9 @@ import {
   SendCommentPayloadInt,
   StatusEnum,
 } from '../../types';
+import { articleSlice } from './articleSlice';
+import { RootState } from '../../app/store';
+import { db } from '../../services/firbase_config';
 
 const eduJournServices = new EduJournServices();
 
@@ -47,6 +57,7 @@ export const uploadArticle = createAsyncThunk<void, FormDataInt>(
         assReviewers: [],
         assEditors: [],
         email: payload.email,
+        vol: 0,
       };
 
       const verUrlData: ModVerDataInt = {
@@ -143,3 +154,44 @@ export const updateAbstract = createAsyncThunk<
     thunkApi.rejectWithValue(`Updating Abstrat ${error}`);
   }
 });
+
+// * Get Volume Count
+export const getVolumeCount = createAsyncThunk<void, void>(
+  'article/getVolumeCount',
+  async (payload, thunkApi) => {
+    const { setVolCount } = articleSlice.actions;
+    try {
+      const q = query(collection(db, 'volume_count'));
+
+      onSnapshot(q, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const itemData = doc.data();
+
+          console.log(itemData.count);
+          const count: Number = itemData.count as Number;
+
+          thunkApi.dispatch(setVolCount(count));
+        });
+      });
+    } catch (error) {
+      thunkApi.rejectWithValue(`Volume count ${error}`);
+    }
+  }
+);
+
+// * Publish Article
+export const publishArticle = createAsyncThunk<void, ArticleInfoInt>(
+  'article/publishArticle',
+  async (payload, thunkApi) => {
+    try {
+      const newVolCount =
+        (thunkApi.getState() as RootState).article.volCount + 1;
+
+      await eduJournServices.setVolumeCount(newVolCount);
+
+      await eduJournServices.publishArticle(payload.id, newVolCount);
+    } catch (error) {
+      thunkApi.rejectWithValue(`Pulishing ${error}`);
+    }
+  }
+);

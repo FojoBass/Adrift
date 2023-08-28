@@ -66,8 +66,6 @@ const Assign: React.FC<AssignInt> = ({ assignType }) => {
           articleId: editorsArticleId ?? '',
         })
       );
-
-    setIsReload && setIsReload(true);
   };
 
   useEffect(() => {

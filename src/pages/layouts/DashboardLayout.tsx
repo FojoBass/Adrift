@@ -1,5 +1,4 @@
-import React, { useRef, useEffect } from 'react';
-import { useAppSelector } from '../../app/store';
+import React, { useRef, useEffect, useState } from 'react';
 import { TfiReload } from 'react-icons/tfi';
 import { BsListTask, BsPersonPlus, BsGear } from 'react-icons/bs';
 import { HiOutlineClipboardDocumentList } from 'react-icons/hi2';
@@ -15,7 +14,9 @@ import AddTeam from '../components/dashboard/AddTeam';
 import Settings from '../components/dashboard/Settings';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { PageSectEnum } from '../../types';
+import { ArticleInfoInt, PageSectEnum, StatusEnum } from '../../types';
+import { useAppSelector, useAppDispatch } from '../../app/store';
+import { articleSlice } from '../../features/article/articleSlice';
 
 interface DashboardLayoutPropInt {
   headerContent: string[];
@@ -32,9 +33,27 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
     userDetails: { name, role, affiliation },
   } = useAppSelector((state) => state.user);
 
-  const { editorArticles, allArticles } = useAppSelector(
-    (state) => state.article
-  );
+  const {
+    editorArticles,
+    allArticles,
+    justPublished,
+    isPublishing,
+    authorArticles,
+    reviewerArticles,
+  } = useAppSelector((state) => state.article);
+
+  const { setJustPublished } = articleSlice.actions;
+  // const [roleArticles] = useState(
+  //   role === 'author'
+  //     ? authorArticles
+  //     : role === 'reviewer'
+  //     ? reviewerArticles
+  //     : role === 'editor'
+  //     ? editorArticles
+  //     : allArticles
+  // );
+
+  const [dummyPageArr, setDummyPageArr] = useState<''[]>([]);
 
   const {
     commentArticleId,
@@ -55,8 +74,15 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
     isReload,
     setIsReload,
     setConfirmations,
+    dashStatusFilter,
+    setDashStatusFilter,
+    setDashPageNumber,
+    dashArticlesPerPage,
+    dashPageNumber,
+    grandModArticles,
   } = useGlobalContext();
 
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const gridStyleRef = useRef({
@@ -90,6 +116,60 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
     return () => clearTimeout(reloadTimeout);
   }, [isReload]);
 
+  useEffect(() => {
+    if (justPublished) dispatch(setJustPublished(false));
+  }, [justPublished]);
+
+  useEffect(() => {
+    if (dashArticlesPerPage) {
+      let modArticles: ArticleInfoInt[] = grandModArticles ?? [];
+
+      switch (dashStatusFilter) {
+        case 'all':
+          break;
+        case StatusEnum.sub:
+          modArticles = modArticles.filter(
+            (art) => art.status === StatusEnum.sub
+          );
+          break;
+        case StatusEnum.rev:
+          modArticles = modArticles.filter(
+            (art) => art.status === StatusEnum.rev
+          );
+          break;
+        case StatusEnum.rej:
+          modArticles = modArticles.filter(
+            (art) => art.status === StatusEnum.rej
+          );
+          break;
+        case StatusEnum.app:
+          modArticles = modArticles.filter(
+            (art) => art.status === StatusEnum.app
+          );
+          break;
+        case StatusEnum.pen:
+          modArticles = modArticles.filter(
+            (art) => art.status === StatusEnum.pen
+          );
+          break;
+        case StatusEnum.pub:
+          modArticles = modArticles.filter(
+            (art) => art.status === StatusEnum.pub
+          );
+          break;
+
+        default:
+          return;
+      }
+
+      const pageCount = Math.ceil(modArticles.length / dashArticlesPerPage);
+
+      console.log(pageCount);
+
+      setDummyPageArr(new Array(pageCount).fill(''));
+    }
+  }, [grandModArticles, dashArticlesPerPage, dashStatusFilter, pageSect]);
+
   return (
     <section id='dashboard_sect'>
       <h3 className='sect_heading'>{role} dashboard</h3>
@@ -116,17 +196,19 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
               </button>
             )}
 
-            <button
-              className={`nav_opt ${
-                pageSect === PageSectEnum.rev ? 'active' : ''
-              }`}
-              onClick={() => setPageSect && setPageSect(PageSectEnum.rev)}
-            >
-              <span className='icon'>
-                <TfiReload />
-              </span>
-              <span className='title'>Articles Under Review</span>
-            </button>
+            {role !== 'reviewer' && (
+              <button
+                className={`nav_opt ${
+                  pageSect === PageSectEnum.rev ? 'active' : ''
+                }`}
+                onClick={() => setPageSect && setPageSect(PageSectEnum.rev)}
+              >
+                <span className='icon'>
+                  <TfiReload />
+                </span>
+                <span className='title'>Articles Under Review</span>
+              </button>
+            )}
 
             <button
               className={`nav_opt ${
@@ -183,13 +265,24 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
 
         <aside className='main_side dashboard_sides'>
           <header className='header_opts'>
-            <select className='sorting'>
-              <option value='all'>All</option>
-              <option value='pending'>Pending</option>
-              <option value='approved'>Approved</option>
-              <option value='rejected'>Rejected</option>
-              <option value='published'>Published</option>
-            </select>
+            {role !== 'reviewer' && (
+              <select
+                className='sorting'
+                value={dashStatusFilter}
+                onChange={(e) =>
+                  setDashStatusFilter &&
+                  setDashStatusFilter(e.target.value as StatusEnum | 'all')
+                }
+              >
+                <option value='all'>All</option>
+                <option value={StatusEnum.sub}>Submitted</option>
+                <option value={StatusEnum.rev}>Reviewing</option>
+                <option value={StatusEnum.app}>Approved</option>
+                <option value={StatusEnum.rej}>Rejected</option>
+                <option value={StatusEnum.pen}>Pending</option>
+                <option value={StatusEnum.pub}>Published</option>
+              </select>
+            )}
 
             <div className='header_opt_wrapper' style={gridStyleRef.current}>
               {headerContent.map((head) => (
@@ -205,23 +298,44 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
           </main>
 
           <footer>
-            <select className='pagination'>
-              <option value='1'>Page 1</option>
-            </select>
-
-            <button
-              className='publish_art_btn'
-              onClick={() =>
-                setConfirmations &&
-                setConfirmations({
-                  isShow: true,
-                  msg: 'publish all pending articles',
-                  type: 'publish',
-                })
+            <select
+              className='pagination'
+              value={dashPageNumber}
+              onChange={(e) =>
+                setDashPageNumber && setDashPageNumber(Number(e.target.value))
               }
             >
-              Publish Vol.
-            </button>
+              {dummyPageArr.map((dum, ind) => (
+                <option value={ind + 1} key={ind}>
+                  {ind + 1}
+                </option>
+              ))}
+            </select>
+
+            {role === 'admin' && (
+              <button
+                className='publish_art_btn'
+                onClick={() =>
+                  setConfirmations &&
+                  setConfirmations({
+                    isShow: true,
+                    msg: 'publish all pending articles',
+                    type: 'publish',
+                  })
+                }
+                style={
+                  isPublishing
+                    ? {
+                        opacity: '0.5',
+                        cursor: 'not-allowed',
+                      }
+                    : {}
+                }
+                disabled={isPublishing}
+              >
+                {isPublishing ? 'Publishing...' : 'Publish Vol.'}
+              </button>
+            )}
           </footer>
         </aside>
       </div>
