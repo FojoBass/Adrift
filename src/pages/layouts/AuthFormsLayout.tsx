@@ -1,7 +1,11 @@
 import React from 'react';
 import { AiOutlineHome } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
-import { useAppSelector } from '../../app/store';
+import { useAppSelector, useAppDispatch } from '../../app/store';
+import { googleSignIn } from '../../features/user/userAsyncThunk';
+import { EduJournServices } from '../../services/EduJournServices';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../services/firbase_config';
 
 interface AuthFormsLayoutPropInt {
   children: React.ReactNode;
@@ -21,6 +25,12 @@ const AuthFormsLayout: React.FC<AuthFormsLayoutPropInt> = ({
   const { isSignupLoading, isLogInLoading } = useAppSelector(
     (state) => state.user
   );
+
+  const dispatch = useAppDispatch();
+
+  const handleGoogleSignup = async () => {
+    dispatch(googleSignIn());
+  };
 
   return (
     <section id={sectId} className='auth_sect'>
@@ -59,8 +69,11 @@ const AuthFormsLayout: React.FC<AuthFormsLayoutPropInt> = ({
 
             <button
               className='opt_btn'
-              disabled={isSignupLoading}
-              style={isSignupLoading ? { opacity: '0.5' } : {}}
+              disabled={isSignupLoading || isLogInLoading}
+              style={
+                isSignupLoading || isLogInLoading ? { opacity: '0.5' } : {}
+              }
+              onClick={handleGoogleSignup}
             >
               <span>G</span>oogle
             </button>

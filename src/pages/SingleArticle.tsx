@@ -30,7 +30,7 @@ const SingleArticle = () => {
   );
   const [isViewFull, setIsViewFull] = useState(false);
 
-  const [otherArticles, setOtherArticles] = useState<ArticleInfoInt[]>([]);
+  const [relatedArticles, setRelatedArticles] = useState<ArticleInfoInt[]>([]);
 
   const fetchVersions = async () => {
     const querySnapshot = await new EduJournServices().getVersions(id ?? '');
@@ -59,19 +59,29 @@ const SingleArticle = () => {
     setCurrentArticle(
       publishedArticles.find((article) => article.id === id) ?? null
     );
-    if (!otherArticles.length) {
+    if (!relatedArticles.length) {
       let modArticles: ArticleInfoInt[] = [];
-
-      for (let i = 0; i < 3; i++) {
-        const randInd = Math.floor(Math.random() * publishedArticles.length);
-        modArticles.push(publishedArticles[randInd]);
-        setOtherArticles(modArticles);
-      }
     }
-  }, [publishedArticles, otherArticles, id]);
+  }, [publishedArticles, relatedArticles, id]);
 
   useEffect(() => {
-    setOtherArticles([]);
+    if (currentArticle) {
+      let modArticles = publishedArticles.filter(
+        (art) => art.category === currentArticle.category
+      );
+
+      let start = Math.floor(Math.random() * (modArticles.length - 1));
+
+      if (modArticles.length + 1 - start < 3) {
+        start = 0;
+      }
+      modArticles = modArticles.slice(start, start + 3);
+
+      setRelatedArticles(modArticles);
+    }
+  }, [currentArticle, publishedArticles]);
+
+  useEffect(() => {
     if (!publishedArticles.find((article) => article.id === id)?.verUrls)
       fetchVersions();
   }, [id]);
@@ -79,10 +89,6 @@ const SingleArticle = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  // useEffect(() => {
-  //   console.log('currentArticle: ', currentArticle);
-  // }, [currentArticle]);
 
   return (
     <section id='single_article_sect'>
@@ -93,18 +99,8 @@ const SingleArticle = () => {
           currentArticle.verUrls ? (
             <>
               <aside className='main_side'>
-                {/* <div className='img_wrapper'>
-            <img src={currentArticle?.coverImgUrl} />
-          </div> */}
                 <header className='top'>
                   <div className='action_btns'>
-                    {/* <button className='print_btn action_btn'>
-                    <span className='icon'>
-                      <BsPrinter />
-                    </span>
-                    Print now
-                  </button> */}
-
                     <a
                       className='download_btn action_btn'
                       href={currentArticle.verUrls[0].mainUrl}
@@ -119,12 +115,27 @@ const SingleArticle = () => {
 
                   <div className='title_wrapper'>
                     <h2 className='title'>{currentArticle?.title}</h2>
-                    <div className='author_name'>
-                      <span className='icon'>
-                        <BsPerson />
-                      </span>
-                      {currentArticle?.author}
+                    <div className='authors'>
+                      <div className='author'>
+                        <span className='icon'>
+                          <BsPerson />
+                        </span>
+                        <span className='name'>{currentArticle.author}</span>
+                      </div>
+                      {currentArticle.coAuthors.length &&
+                        currentArticle.coAuthors[0] && (
+                          <div className='co_authors'>
+                            <span className='heading'>Co-authors:</span>
+
+                            {currentArticle.coAuthors.map((auth, ind) => (
+                              <span className='co_name' key={ind}>
+                                {auth}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                     </div>
+                    <p className='category'>{currentArticle.category}</p>
                   </div>
                 </header>
 
@@ -135,28 +146,7 @@ const SingleArticle = () => {
                     <p>{currentArticle.abstract}</p>
                   </div>
 
-                  {/* <button
-                  className='view_full_btn'
-                  onClick={() => setIsViewFull(true)}
-                >
-                  View full article
-                </button>
-
-                {isViewFull && (
-                  <iframe
-                    className='full_article_win'
-                    src={currentArticle.verUrls[0].mainUrl}
-                  ></iframe>
-                )} */}
-
                   <footer className='action_btns'>
-                    {/* <button className='print_btn action_btn'>
-                    <span className='icon'>
-                      <BsPrinter />
-                    </span>
-                    Print now
-                  </button> */}
-
                     <a
                       className='download_btn action_btn'
                       href={currentArticle.verUrls[0].mainUrl}
@@ -172,10 +162,10 @@ const SingleArticle = () => {
               </aside>
 
               <aside className='side_bar'>
-                <h3 className='sect_heading'>Other Articles</h3>
+                <h3 className='sect_heading'>Related Articles</h3>
 
                 <div className='articles_wrapper'>
-                  {otherArticles.map((article) => (
+                  {relatedArticles.map((article) => (
                     <Link
                       to={`/article/${article.id}`}
                       className='other_article'

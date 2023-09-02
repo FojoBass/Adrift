@@ -26,7 +26,7 @@ const Login = () => {
     e.preventDefault();
 
     if (!email || !password) toast.info('All fields are required');
-    else dispatch(signInUser({ email, password, role }));
+    else dispatch(signInUser({ email: email.toLowerCase(), password, role }));
   };
 
   useEffect(() => {

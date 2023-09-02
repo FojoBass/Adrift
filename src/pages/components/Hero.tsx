@@ -63,7 +63,7 @@ const Hero = () => {
           <div className='post_info'>
             <h2 className='title'>{hero.title}</h2>
             <p className='desc'>
-              {hero.abstract.split(' ').splice(0, 50).join(' ')}...
+              {hero?.abstract.split(' ').splice(0, 50).join(' ')}...
             </p>
             <Link to={`/article/${hero.id}`}>READ MORE</Link>
           </div>

@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
   Outlet,
+  useNavigate,
 } from 'react-router-dom';
 import Home from './pages/Home';
 import Error from './pages/Error';
@@ -28,7 +29,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from './services/firbase_config';
 import { useAppSelector, useAppDispatch } from './app/store';
 import { userSlice } from './features/user/userSlice';
-import { getUserInfo } from './features/user/userAsyncThunk';
+import { getUserInfo, registerUser } from './features/user/userAsyncThunk';
 import Loading from './pages/Loading';
 import Verification from './pages/components/Verification';
 import { useGlobalContext } from './context';
@@ -46,13 +47,21 @@ import {
   usersColRef,
 } from './services/EduJournServices';
 import { articleSlice } from './features/article/articleSlice';
-import { MailEnum, VerUrlsInt } from './types';
+import { MailEnum, VerUrlsInt, VolCountInt } from './types';
 import Confirmations from './pages/components/Confirmations';
 import emailjs from '@emailjs/browser';
 import {
   getVolumeCount,
   publishArticle,
+  updateVolumeCount,
 } from './features/article/articleAsyncuThunk';
+import { v4 } from 'uuid';
+import {
+  validateAffil,
+  validateDept,
+  validateName,
+  validateTitle,
+} from './helpers/formHandling';
 
 // ! ADD A 'Scroll to Top' BUTTON. DO NOT FORGET
 
@@ -73,9 +82,11 @@ function App() {
     resetIsFirstEnter,
     setIsFirstArticleFetch,
     setVersions,
+    setCategories,
+    setCurrentIssue,
   } = articleSlice.actions;
 
-  const { sendMail, setSendMail, setIsReload } = useGlobalContext();
+  const { sendMail, setSendMail, setIsReload, recentDate } = useGlobalContext();
 
   const dispatch = useAppDispatch();
   const { isLoggedIn, isAlreadyAuth, isAlreadyReg, userDetails } =
@@ -88,6 +99,9 @@ function App() {
     reviewerArticles,
     isFirstArticleFetch,
     publishedArticles,
+    categories,
+    volCount,
+    currentIssue,
   } = useAppSelector((state) => state.article);
 
   const eduJournServices = new EduJournServices();
@@ -96,13 +110,12 @@ function App() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         if (!isLoggedIn && sessionStorage.getItem('userRole')) {
+          // *This if runs when user reloads page when logged in
           const email = user.email ? user.email : '';
           dispatch(getUserInfo({ email }));
-          console.log('logged in: ', user);
         }
       } else {
         dispatch(setUserAppLoading(false));
-        console.log('logged out: ', user);
       }
     });
   }, []);
@@ -384,6 +397,7 @@ function App() {
 
   useEffect(() => {
     let unsubPub: () => void;
+    let unsubCateg: () => void;
     dispatch(setArticleLoading(true));
 
     // *Published Articles
@@ -415,12 +429,53 @@ function App() {
       }
     );
 
-    return () => unsubPub?.();
+    // * Categories
+    unsubCateg = onSnapshot(
+      query(collection(db, 'categories')),
+      (querySnapshot) => {
+        let categories: DocumentData = [];
+
+        querySnapshot.forEach((doc) => {
+          const categoriesData = doc.data();
+
+          categories = [...categoriesData.list];
+        });
+
+        dispatch(setCategories(categories));
+      }
+    );
+
+    return () => {
+      unsubPub?.();
+      unsubCateg?.();
+    };
   }, []);
 
   useEffect(() => {
-    console.log('publishedArticles: ', publishedArticles);
-  }, []);
+    if (volCount.year && recentDate) {
+      if (volCount.year < recentDate.getFullYear()) {
+        const modVolCount: VolCountInt = {
+          count: volCount.count + 1,
+          year: recentDate.getFullYear(),
+        };
+
+        dispatch(updateVolumeCount(modVolCount));
+      }
+    }
+  }, [volCount, recentDate]);
+
+  useEffect(() => {
+    if (recentDate) {
+      const month = recentDate.getMonth();
+      let currentIssue = 0;
+      if (month <= 2) currentIssue = 1;
+      if (month > 2 && month <= 5) currentIssue = 2;
+      if (month > 5 && month <= 8) currentIssue = 3;
+      if (month > 8 && month <= 11) currentIssue = 4;
+
+      dispatch(setCurrentIssue(currentIssue));
+    }
+  }, [recentDate]);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -450,6 +505,7 @@ export default App;
 
 const Root: React.FC = () => {
   const { superAppLoading, confirmations } = useGlobalContext();
+  const { setupAcct } = useAppSelector((state) => state.user);
   return (
     <>
       {superAppLoading ? (
@@ -461,9 +517,124 @@ const Root: React.FC = () => {
           <Outlet />
           <ToastContainer />
           <Confirmations />
+          {setupAcct && <SetupAcct />}
           <Footer />
         </>
       )}
     </>
+  );
+};
+
+const SetupAcct: React.FC = () => {
+  const [name, setName] = useState('');
+  const [title, setTitle] = useState('');
+  const [dept, setDept] = useState('');
+  const [affiliation, setAffiliation] = useState('');
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const deptInputRef = useRef<HTMLInputElement | null>(null);
+  const affilInputRef = useRef<HTMLInputElement | null>(null);
+
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { resetSetupAcct } = userSlice.actions;
+
+  const { isSignupLoading } = useAppSelector((state) => state.user);
+
+  const resetFields = () => {
+    setName('');
+    setTitle('');
+    setDept('');
+    setAffiliation('');
+
+    toast.info('Login again');
+    dispatch(resetSetupAcct(''));
+  };
+
+  const handleSetUp = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (
+      validateName(name, nameInputRef.current) &&
+      validateTitle(title, titleInputRef.current) &&
+      validateDept(dept, deptInputRef.current) &&
+      validateAffil(affiliation, affilInputRef.current)
+    ) {
+      const data = {
+        name,
+        title,
+        email: auth.currentUser?.email ?? '',
+        dept,
+        affiliation,
+        id: v4(),
+        role: 'author',
+        password: '****',
+      };
+      dispatch(registerUser({ data, resetFields, isGoogle: true }));
+    }
+  };
+
+  return (
+    <section className='set_acct_sect'>
+      <form className='set_acct_form' onSubmit={handleSetUp}>
+        <h2 className='title'>Setup Account</h2>
+
+        <div className='form_opts'>
+          <div className='form_opt'>
+            <input
+              type='text'
+              placeholder='Fullname (e.g Dr. John Doe)'
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              ref={nameInputRef}
+            />
+          </div>
+
+          <div className='form_opt'>
+            <input
+              type='text'
+              placeholder='Academic title (e.g Professor)'
+              onChange={(e) => setTitle(e.target.value)}
+              value={title}
+              ref={titleInputRef}
+            />
+          </div>
+
+          <div className='form_opt'>
+            <input
+              type='text'
+              placeholder='Department'
+              value={dept}
+              onChange={(e) => setDept(e.target.value)}
+              ref={deptInputRef}
+            />
+          </div>
+
+          <div className='form_opt'>
+            <input
+              type='text'
+              value={affiliation}
+              onChange={(e) => setAffiliation(e.target.value)}
+              placeholder='Affiliation'
+              ref={affilInputRef}
+            />
+          </div>
+        </div>
+        <button
+          className='submit_btn'
+          style={
+            isSignupLoading
+              ? {
+                  opacity: '0.5',
+                  cursor: 'not-allowed',
+                }
+              : {}
+          }
+          disabled={isSignupLoading}
+        >
+          {isSignupLoading ? 'Setting Up...' : 'Set Up'}
+        </button>
+      </form>
+    </section>
   );
 };

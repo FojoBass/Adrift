@@ -17,6 +17,7 @@ const AdminDashboard = () => {
     "Vers'",
     "Rev'ers",
     'Editors',
+    "Auth's",
   ]);
   const {
     pageSect,
@@ -25,6 +26,8 @@ const AdminDashboard = () => {
     dashArticlesPerPage,
     setIsReload,
     setGrandModArticles,
+    grandModArticles,
+    setDashPageNumber,
   } = useGlobalContext();
 
   // ? Author comment contains comments between editor(s) and author
@@ -66,31 +69,37 @@ const AdminDashboard = () => {
           modDispArticles = modDispArticles.filter(
             (art) => art.status === StatusEnum.sub
           );
+          setDashPageNumber && setDashPageNumber(1);
           break;
         case StatusEnum.rev:
           modDispArticles = modDispArticles.filter(
             (art) => art.status === StatusEnum.rev
           );
+          setDashPageNumber && setDashPageNumber(1);
           break;
         case StatusEnum.rej:
           modDispArticles = modDispArticles.filter(
             (art) => art.status === StatusEnum.rej
           );
+          setDashPageNumber && setDashPageNumber(1);
           break;
         case StatusEnum.app:
           modDispArticles = modDispArticles.filter(
             (art) => art.status === StatusEnum.app
           );
+          setDashPageNumber && setDashPageNumber(1);
           break;
         case StatusEnum.pen:
           modDispArticles = modDispArticles.filter(
             (art) => art.status === StatusEnum.pen
           );
+          setDashPageNumber && setDashPageNumber(1);
           break;
         case StatusEnum.pub:
           modDispArticles = modDispArticles.filter(
             (art) => art.status === StatusEnum.pub
           );
+          setDashPageNumber && setDashPageNumber(1);
           break;
 
         default:

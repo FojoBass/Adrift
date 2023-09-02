@@ -17,6 +17,7 @@ const EditorDashboard = () => {
     'Comments',
     "Vers'",
     "Rev'ers",
+    "Auth's",
   ]);
 
   // ? Author comment contains comments between editor(s) and author

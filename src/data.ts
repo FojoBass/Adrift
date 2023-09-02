@@ -34,10 +34,6 @@ export const navLinks = [
     url: '/submissions',
     title: 'Submit Paper',
   },
-  // {
-  //   url: '/login',
-  //   title: 'Login/Signup',
-  // },
 ];
 
 export const quickLinks = [
@@ -77,6 +73,7 @@ export const socialLinks = [
 export const regex = {
   alpha: /^[A-Za-z\s]+$/,
   specialAlpha: /^[A-Za-z.\s\-']+$/,
+  specialAlpha2: /^[A-Za-z.,\s\-']+$/,
   alphaNumberic: /^[a-zA-Z0-9]+$/,
   email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
   url: /^(http|https|ftp):\/\/([^\s/$.?#].[^\s]*)?$/,

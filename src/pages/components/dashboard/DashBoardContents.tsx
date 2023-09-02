@@ -46,6 +46,7 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
     setEditorsArticleId,
     setSendMail,
     setIsReload,
+    setAuthorsArticleId,
   } = useGlobalContext();
   const { isLoggedIn, userDetails } = useAppSelector((state) => state.user);
   const {
@@ -216,8 +217,6 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
     let unsubEd: () => void;
     let unsubVer: () => void;
     if (isLoggedIn) {
-      // console.log('ENTER FIRST');
-
       unsubVer = fileVersion();
 
       switch (userDetails.role) {
@@ -383,6 +382,21 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
             }
           >
             {article.assEditors?.length}
+          </button>
+        )}
+
+        {(userDetails.role === 'admin' || userDetails.role === 'editor') && (
+          <button
+            className={`auth_col col ${
+              userDetails.role === 'editor' || userDetails.role === 'admin'
+                ? 'hover'
+                : ''
+            }`}
+            onClick={() =>
+              setAuthorsArticleId && setAuthorsArticleId(article.id)
+            }
+          >
+            {article.coAuthors?.length + 1}
           </button>
         )}
       </div>

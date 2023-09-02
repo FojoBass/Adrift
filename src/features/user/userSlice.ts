@@ -6,6 +6,8 @@ import {
   getUserInfo,
   updateUserInfo,
   updatePassWord,
+  getAuthors,
+  googleSignIn,
 } from './userAsyncThunk';
 import { UserInfoInt } from '../../types';
 
@@ -29,6 +31,10 @@ interface IntialStateInt {
   justUpdatePassword: boolean;
   updatingPasswordFailed: boolean;
   updatingPassword: boolean;
+  allAuthors: UserInfoInt[];
+  isFetchingAllAuthors: boolean;
+  isFetchAllAuthorsFailed: boolean;
+  setupAcct: boolean;
 }
 
 const initialState: IntialStateInt = {
@@ -60,6 +66,10 @@ const initialState: IntialStateInt = {
   justUpdatePassword: false,
   updatingPasswordFailed: false,
   updatingPassword: false,
+  allAuthors: [],
+  isFetchingAllAuthors: false,
+  isFetchAllAuthorsFailed: false,
+  setupAcct: false,
 };
 
 export const userSlice = createSlice({
@@ -108,9 +118,15 @@ export const userSlice = createSlice({
     resetJustUpdatePassword(state, action) {
       state.justUpdatePassword = false;
     },
+    resetIsFetchingAuthorsFailed(state, action) {
+      state.isFetchAllAuthorsFailed = false;
+    },
+    resetSetupAcct(state, action) {
+      state.setupAcct = false;
+    },
   },
   extraReducers: (builder) => {
-    // *Sign up
+    // *Sign up Register User
     builder
       .addCase(registerUser.pending, (state) => {
         state.isSignupLoading = true;
@@ -129,7 +145,7 @@ export const userSlice = createSlice({
         state.isAddingTeam = false;
         console.log(error);
       });
-    // * Log in
+    // * Sign in
     builder
       .addCase(signInUser.pending, (state) => {
         state.isLogInLoading = true;
@@ -145,7 +161,31 @@ export const userSlice = createSlice({
         state.appError = error.payload as string;
         console.log(error);
       });
-    // * User Info
+
+    // * Google Sign in
+    builder
+      .addCase(googleSignIn.pending, (state) => {
+        state.isLogInLoading = true;
+      })
+      .addCase(googleSignIn.fulfilled, (state, action) => {
+        if (typeof action.payload === 'boolean')
+          state.setupAcct = action.payload;
+
+        if (typeof action.payload === 'object')
+          state.userDetails = action.payload;
+
+        state.isLogInLoading = false;
+
+        state.isLoggedIn = action.payload === true ? false : true;
+
+        state.isJustLoggedIn = action.payload === true ? false : true;
+      })
+      .addCase(googleSignIn.rejected, (state, error) => {
+        state.isLogInLoading = false;
+        state.appError = error.payload as string;
+        console.log(error);
+      });
+    //  *User Info
     builder
       .addCase(getUserInfo.pending, (state) => {
         state.userAppLoading = true;
@@ -184,6 +224,19 @@ export const userSlice = createSlice({
       .addCase(updatePassWord.rejected, (state, error) => {
         console.log(error);
         state.updatingPassword = false;
+      });
+    // * Get all users
+    builder
+      .addCase(getAuthors.pending, (state) => {
+        state.isFetchingAllAuthors = true;
+      })
+      .addCase(getAuthors.fulfilled, (state, action) => {
+        state.allAuthors = action.payload;
+        state.isFetchingAllAuthors = false;
+      })
+      .addCase(getAuthors.rejected, (state, error) => {
+        state.isFetchAllAuthorsFailed = true;
+        state.isFetchingAllAuthors = false;
       });
   },
 });

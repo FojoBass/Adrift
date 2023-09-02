@@ -7,8 +7,14 @@ import {
   sendComment,
   uploadVersion,
   updateAbstract,
+  updateCateg,
 } from './articleAsyncuThunk';
-import { ArticleInfoInt, CommentInt, VerUrlsInt } from '../../types';
+import {
+  ArticleInfoInt,
+  CommentInt,
+  VerUrlsInt,
+  VolCountInt,
+} from '../../types';
 
 interface InitialStateInt {
   allArticles: ArticleInfoInt[];
@@ -35,11 +41,17 @@ interface InitialStateInt {
   isUpdatingAbstract: boolean;
   isUpdatingAbstractFailed: boolean;
   justUpdatedAbstract: boolean;
+  isUpdatingCateg: boolean;
+  isUpdatingCategFailed: boolean;
+  justUpdatedCateg: boolean;
   initialLoading: boolean;
-  volCount: number;
+  volCount: VolCountInt;
+  currentIssue: 0 | 1 | 2 | 3 | 4;
   isFirstArticleFetch: boolean;
   isPublishing: boolean;
   justPublished: boolean;
+  categories: string[];
+  isPublishingFailed: boolean;
 }
 
 const initialState: InitialStateInt = {
@@ -67,11 +79,17 @@ const initialState: InitialStateInt = {
   isUpdatingAbstract: false,
   isUpdatingAbstractFailed: false,
   justUpdatedAbstract: false,
+  isUpdatingCateg: false,
+  isUpdatingCategFailed: false,
+  justUpdatedCateg: false,
   initialLoading: true,
-  volCount: 0,
+  volCount: { count: 0, year: 0 },
   isFirstArticleFetch: true,
   isPublishing: false,
   justPublished: false,
+  isPublishingFailed: false,
+  categories: [],
+  currentIssue: 0,
 };
 
 const versionsSetter = (
@@ -298,7 +316,7 @@ export const articleSlice = createSlice({
       state.initialLoading = action.payload;
     },
     setVolCount(state, action) {
-      state.volCount = action.payload as number;
+      state.volCount = action.payload as typeof state.volCount;
     },
     setIsFirstArticleFetch(state, action) {
       state.isFirstArticleFetch = action.payload;
@@ -308,6 +326,21 @@ export const articleSlice = createSlice({
     },
     setJustPublished(state, action) {
       state.justPublished = true;
+    },
+    setCategories(state, action) {
+      state.categories = action.payload;
+    },
+    resetJustUpdatedCateg(state, action) {
+      state.justUpdatedCateg = false;
+    },
+    resetIsUpdatingCategFailed(state, action) {
+      state.justUpdatedCateg = false;
+    },
+    setCurrentIssue(state, action) {
+      state.currentIssue = action.payload;
+    },
+    setIsPublishingFailed(state, action) {
+      state.isPublishingFailed = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -384,6 +417,19 @@ export const articleSlice = createSlice({
       .addCase(updateAbstract.rejected, (state, error) => {
         state.isUpdatingAbstract = false;
         state.isUpdatingAbstractFailed = true;
+        console.log(error);
+      });
+    builder
+      .addCase(updateCateg.pending, (state) => {
+        state.isUpdatingCateg = true;
+      })
+      .addCase(updateCateg.fulfilled, (state, action) => {
+        state.isUpdatingCateg = false;
+        state.justUpdatedCateg = true;
+      })
+      .addCase(updateCateg.rejected, (state, error) => {
+        state.isUpdatingCateg = false;
+        state.isUpdatingCategFailed = true;
         console.log(error);
       });
   },

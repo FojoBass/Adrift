@@ -42,10 +42,6 @@ const Home = () => {
   }, [publishedArticles, otherArticles]);
 
   useEffect(() => {
-    console.log('otherARticles: ', otherArticles);
-  }, [otherArticles]);
-
-  useEffect(() => {
     setOtherArticles([]);
     window.scrollTo(0, 0);
   }, []);

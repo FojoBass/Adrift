@@ -28,6 +28,8 @@ export interface DataInt {
   assEditors: never[];
   email: string;
   vol: number;
+  coAuthors: string[];
+  issue: number;
 }
 
 export interface VerDataInt {
@@ -97,13 +99,15 @@ export interface ArticleInfoInt {
   status: StatusEnum;
   category: string;
   comments: CommentsInt;
-  createdAt: FieldPath;
-  userID: string;
-  publishedAt: FieldPath | '';
+  createdAt: string;
+  userId: string;
+  publishedAt: string;
   verUrls: VerUrlsInt[];
   assReviewers: string[];
   assEditors: string[];
   email: string;
+  coAuthors: string[];
+  issue: number;
   vol: number;
 }
 
@@ -118,6 +122,7 @@ export interface FormDataInt {
   mainFile: '' | File;
   subFiles: [] | FileList | '';
   email: string;
+  coAuthors: string[];
 }
 
 export enum PageSectEnum {
@@ -144,4 +149,9 @@ export enum MailEnum {
   appArt = 'approve article',
   rejArt = 'reject article',
   pubArt = 'publish article',
+}
+
+export interface VolCountInt {
+  count: number;
+  year: number;
 }

@@ -10,7 +10,7 @@ export const inputError = (
   return false;
 };
 
-const validateName = (name: string, el: HTMLInputElement | null) => {
+const validateName = (name: string, el: HTMLInputElement | null): boolean => {
   if (!name) return inputError(el);
 
   if (!regex.specialAlpha.test(name))
@@ -22,7 +22,19 @@ const validateName = (name: string, el: HTMLInputElement | null) => {
   return true;
 };
 
-const validateTitle = (title: string, el: HTMLInputElement | null) => {
+const validateCoAuthors = (
+  inputValue: string,
+  el: HTMLInputElement | null
+): boolean => {
+  if (inputValue && !regex.specialAlpha2.test(inputValue))
+    return inputError(
+      el,
+      'Co-Authors can contain only letters, hypens, single quotes and commas!'
+    );
+  return true;
+};
+
+const validateTitle = (title: string, el: HTMLInputElement | null): boolean => {
   if (!title) return inputError(el);
 
   if (!regex.specialAlpha.test(title))
@@ -34,14 +46,14 @@ const validateTitle = (title: string, el: HTMLInputElement | null) => {
   return true;
 };
 
-const validateEmail = (email: string, el: HTMLInputElement | null) => {
+const validateEmail = (email: string, el: HTMLInputElement | null): boolean => {
   if (!email) return inputError(el);
   if (!regex.email.test(email)) return inputError(el, 'Input valid email!');
 
   return true;
 };
 
-const validateDept = (dept: string, el: HTMLInputElement | null) => {
+const validateDept = (dept: string, el: HTMLInputElement | null): boolean => {
   if (!dept) return inputError(el);
 
   if (!regex.specialAlpha.test(dept))
@@ -53,7 +65,10 @@ const validateDept = (dept: string, el: HTMLInputElement | null) => {
   return true;
 };
 
-const validatePassword = (password: string, el: HTMLInputElement | null) => {
+const validatePassword = (
+  password: string,
+  el: HTMLInputElement | null
+): boolean => {
   if (!password) return inputError(el);
   if (password.length < 8)
     return inputError(el, 'Password must be at least 8 characters!');
@@ -77,7 +92,10 @@ const validateConPassword = (
   return true;
 };
 
-const validateAffil = (affiliation: string, el: HTMLInputElement | null) => {
+const validateAffil = (
+  affiliation: string,
+  el: HTMLInputElement | null
+): boolean => {
   if (!affiliation) return inputError(el);
   if (!regex.specialAlpha.test(affiliation))
     return inputError(
@@ -90,7 +108,7 @@ const validateAffil = (affiliation: string, el: HTMLInputElement | null) => {
 const customValidate = (
   value: string,
   el: HTMLInputElement | HTMLTextAreaElement | null
-) => {
+): boolean => {
   if (!value) return inputError(el);
   return true;
 };
@@ -104,4 +122,5 @@ export {
   validatePassword,
   validateTitle,
   customValidate,
+  validateCoAuthors,
 };

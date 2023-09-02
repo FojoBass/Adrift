@@ -1,6 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { TfiReload } from 'react-icons/tfi';
-import { BsListTask, BsPersonPlus, BsGear } from 'react-icons/bs';
+import {
+  BsListTask,
+  BsPersonPlus,
+  BsGear,
+  BsHddStack,
+  BsPeople,
+} from 'react-icons/bs';
 import { HiOutlineClipboardDocumentList } from 'react-icons/hi2';
 import { FiLogOut } from 'react-icons/fi';
 import { v4 } from 'uuid';
@@ -17,6 +23,9 @@ import { toast } from 'react-toastify';
 import { ArticleInfoInt, PageSectEnum, StatusEnum } from '../../types';
 import { useAppSelector, useAppDispatch } from '../../app/store';
 import { articleSlice } from '../../features/article/articleSlice';
+import Categories from '../components/dashboard/Categories';
+import Authors from '../components/dashboard/Authors';
+import AllAuthors from '../components/dashboard/AllAuthors';
 
 interface DashboardLayoutPropInt {
   headerContent: string[];
@@ -40,9 +49,11 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
     isPublishing,
     authorArticles,
     reviewerArticles,
+    currentIssue,
+    isPublishingFailed,
   } = useAppSelector((state) => state.article);
 
-  const { setJustPublished } = articleSlice.actions;
+  const { setJustPublished, setIsPublishingFailed } = articleSlice.actions;
   // const [roleArticles] = useState(
   //   role === 'author'
   //     ? authorArticles
@@ -60,6 +71,7 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
     statusArticleId,
     reviewersArticleId,
     versionArticleId,
+    authorsArticleId,
     editorsArticleId,
     pageSect,
     setPageSect,
@@ -80,6 +92,10 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
     dashArticlesPerPage,
     dashPageNumber,
     grandModArticles,
+    setIsCategories,
+    isCategories,
+    isAuthors,
+    setIsAuthors,
   } = useGlobalContext();
 
   const dispatch = useAppDispatch();
@@ -90,10 +106,10 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
       role === 'author'
         ? '1.25fr 3fr 2fr 1fr 1.25fr 1fr'
         : role === 'editor'
-        ? '1.25fr 3fr 2fr 1fr 1.25fr 1fr 1fr'
+        ? '1.25fr 3fr 2fr 1fr 1.25fr 1fr 1fr 1fr'
         : role === 'reviewer'
         ? '1.25fr 3fr 2fr 1.25fr 1fr'
-        : '1.25fr 3fr 2fr 1fr 1.25fr 1fr 1fr 1fr'
+        : '1.25fr 3fr 2fr 1fr 1.25fr 1fr 1fr 1fr 1fr'
     }`,
   });
 
@@ -117,8 +133,16 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
   }, [isReload]);
 
   useEffect(() => {
-    if (justPublished) dispatch(setJustPublished(false));
-  }, [justPublished]);
+    if (justPublished) {
+      toast.success('Articles Published');
+      dispatch(setJustPublished(false));
+    }
+
+    if (isPublishingFailed) {
+      toast.error('Articles Publishing failed!');
+      dispatch(setIsPublishingFailed(false));
+    }
+  }, [justPublished, isPublishingFailed]);
 
   useEffect(() => {
     if (dashArticlesPerPage) {
@@ -164,8 +188,6 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
 
       const pageCount = Math.ceil(modArticles.length / dashArticlesPerPage);
 
-      console.log(pageCount);
-
       setDummyPageArr(new Array(pageCount).fill(''));
     }
   }, [grandModArticles, dashArticlesPerPage, dashStatusFilter, pageSect]);
@@ -182,34 +204,6 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
           </div>
 
           <div className='nav_opts'>
-            {role === 'admin' && (
-              <button
-                className={`nav_opt ${
-                  pageSect === PageSectEnum.sub ? 'active' : ''
-                }`}
-                onClick={() => setPageSect && setPageSect(PageSectEnum.sub)}
-              >
-                <span className='icon'>
-                  <HiOutlineClipboardDocumentList />
-                </span>
-                <span className='title'>Articles to be Reviewed</span>
-              </button>
-            )}
-
-            {role !== 'reviewer' && (
-              <button
-                className={`nav_opt ${
-                  pageSect === PageSectEnum.rev ? 'active' : ''
-                }`}
-                onClick={() => setPageSect && setPageSect(PageSectEnum.rev)}
-              >
-                <span className='icon'>
-                  <TfiReload />
-                </span>
-                <span className='title'>Articles Under Review</span>
-              </button>
-            )}
-
             <button
               className={`nav_opt ${
                 pageSect === PageSectEnum.all ? 'active' : ''
@@ -232,6 +226,26 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
                     <BsPersonPlus />
                   </span>
                   <span className='title'>Add Team Member</span>
+                </button>
+
+                <button
+                  className='nav_opt'
+                  onClick={() => setIsCategories && setIsCategories(true)}
+                >
+                  <span className='icon'>
+                    <BsHddStack />
+                  </span>
+                  <span className='title'>View Categories</span>
+                </button>
+
+                <button
+                  className='nav_opt'
+                  onClick={() => setIsAuthors && setIsAuthors(true)}
+                >
+                  <span className='icon'>
+                    <BsPeople />
+                  </span>
+                  <span className='title'>View Authors</span>
                 </button>
               </>
             )}
@@ -319,7 +333,7 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
                   setConfirmations &&
                   setConfirmations({
                     isShow: true,
-                    msg: 'publish all pending articles',
+                    msg: `publish all pending articles to issue ${currentIssue}`,
                     type: 'publish',
                   })
                 }
@@ -333,7 +347,7 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
                 }
                 disabled={isPublishing}
               >
-                {isPublishing ? 'Publishing...' : 'Publish Vol.'}
+                {isPublishing ? 'Publishing...' : 'Publish'}
               </button>
             )}
           </footer>
@@ -351,6 +365,9 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
       {editorsArticleId && <Editors />}
       {isAddTeam && <AddTeam />}
       {isSettings && <Settings />}
+      {isCategories && <Categories />}
+      {authorsArticleId && <Authors />}
+      {isAuthors && <AllAuthors />}
     </section>
   );
 };

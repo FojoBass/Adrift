@@ -207,24 +207,24 @@ const Assign: React.FC<AssignInt> = ({ assignType }) => {
         </div>
       </div>
 
-      {displayArticle?.status === StatusEnum.sub ||
-        (displayArticle?.status === StatusEnum.rev && (
-          <button
-            className='update_btn'
-            onClick={handleUpdate}
-            style={
-              isAssigningTeam || userDetails.role !== 'admin'
-                ? {
-                    opacity: '0.5',
-                    cursor: 'not-allowed',
-                  }
-                : {}
-            }
-            disabled={isAssigningTeam || userDetails.role !== 'admin'}
-          >
-            {isAssigningTeam ? 'Updating...' : 'Update'}
-          </button>
-        ))}
+      {(displayArticle?.status === StatusEnum.sub ||
+        displayArticle?.status === StatusEnum.rev) && (
+        <button
+          className='update_btn'
+          onClick={handleUpdate}
+          style={
+            isAssigningTeam || userDetails.role !== 'admin'
+              ? {
+                  opacity: '0.5',
+                  cursor: 'not-allowed',
+                }
+              : {}
+          }
+          disabled={isAssigningTeam || userDetails.role !== 'admin'}
+        >
+          {isAssigningTeam ? 'Updating...' : 'Update'}
+        </button>
+      )}
     </>
   );
 };

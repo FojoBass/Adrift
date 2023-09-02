@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { useAppSelector } from './app/store';
 import { FieldValue } from 'firebase/firestore';
 import { ArticleInfoInt, MailEnum, PageSectEnum, StatusEnum } from './types';
+import { timeConverter } from './helpers/timeConverter';
 
 // todo DELTE THESE INTERFACES
 interface CommentInt {
@@ -34,6 +35,8 @@ interface ContextInt {
   setSelecetedStatus?: React.Dispatch<React.SetStateAction<string>>;
   versionArticleId?: string;
   setVersionArticleId?: React.Dispatch<React.SetStateAction<string>>;
+  authorsArticleId?: string;
+  setAuthorsArticleId?: React.Dispatch<React.SetStateAction<string>>;
   reviewersArticleId?: string;
   setReviewersArticleId?: React.Dispatch<React.SetStateAction<string>>;
   verErrorMsg?: string;
@@ -42,6 +45,8 @@ interface ContextInt {
   setEditorsArticleId?: React.Dispatch<React.SetStateAction<string>>;
   isAddTeam?: boolean;
   setIsAddTeam?: React.Dispatch<React.SetStateAction<boolean>>;
+  isAuthors?: boolean;
+  setIsAuthors?: React.Dispatch<React.SetStateAction<boolean>>;
   isSettings?: boolean;
   setIsSettings?: React.Dispatch<React.SetStateAction<boolean>>;
   pageSect?: PageSectEnum;
@@ -54,6 +59,8 @@ interface ContextInt {
   setIsLoggingOut?: React.Dispatch<React.SetStateAction<boolean>>;
   justLoggedOut?: boolean;
   setJustLoggedOut?: React.Dispatch<React.SetStateAction<boolean>>;
+  isCategories?: boolean;
+  setIsCategories?: React.Dispatch<React.SetStateAction<boolean>>;
   superAppLoading?: boolean;
   setAffirm?: React.Dispatch<
     React.SetStateAction<{ state: boolean; type: string }>
@@ -101,6 +108,8 @@ interface ContextInt {
   dashArticlesPerPage?: number;
   grandModArticles?: ArticleInfoInt[];
   setGrandModArticles?: React.Dispatch<React.SetStateAction<ArticleInfoInt[]>>;
+  recentDate?: Date;
+  setRecentDate?: React.Dispatch<React.SetStateAction<Date>>;
 }
 
 // * This enum is for the sections on the dashboard
@@ -115,16 +124,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [statusArticleId, setStatusArticleId] = useState('');
   const [versionArticleId, setVersionArticleId] = useState('');
   const [reviewersArticleId, setReviewersArticleId] = useState('');
+  const [authorsArticleId, setAuthorsArticleId] = useState('');
   const [editorsArticleId, setEditorsArticleId] = useState('');
   const [isAddTeam, setIsAddTeam] = useState(false);
   const [isSettings, setIsSettings] = useState(false);
   const [disableVerBtn, setDisableVerBtn] = useState(false);
   const [verErrorMsg, setVerErrorMsg] = useState('');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isAuthors, setIsAuthors] = useState(false);
   const [justLoggedOut, setJustLoggedOut] = useState(false);
   const [superAppLoading, setSuperAppLoading] = useState(true);
   const [verDisplayArticle, setVerDisplayArticle] =
     useState<ArticleInfoInt | null>(null);
+  const [isCategories, setIsCategories] = useState(false);
 
   const [pageSect, setPageSect] = useState<PageSectEnum>(PageSectEnum.all);
   const eduJournServices = new EduJournServices();
@@ -132,6 +144,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [selectedStatus, setSelecetedStatus] = useState('pending');
   const { userAppLoading } = useAppSelector((state) => state.user);
   const { articleAppLoading } = useAppSelector((state) => state.article);
+
+  const [recentDate, setRecentDate] = useState(new Date());
 
   const [isReload, setIsReload] = useState(false);
   const [sendMail, setSendMail] = useState({
@@ -179,6 +193,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const recentTime = async () => {
+    try {
+      await eduJournServices.setTime();
+      const data = await eduJournServices.getTime();
+      setRecentDate(timeConverter(data.data()?.date.toDate().toString()));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    recentTime();
+  }, []);
+
   const sharedProps: ContextInt = {
     commentArticleId,
     setCommentArticleId,
@@ -225,6 +253,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     setDashArticlesPerPage,
     grandModArticles,
     setGrandModArticles,
+    isCategories,
+    setIsCategories,
+    recentDate,
+    authorsArticleId,
+    setAuthorsArticleId,
+    isAuthors,
+    setIsAuthors,
   };
 
   useEffect(() => {

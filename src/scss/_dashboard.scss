@@ -21,11 +21,11 @@
   }
 
   &.editor_opt {
-    grid-template-columns: 1.25fr 3fr 2fr 1fr 1.25fr 1fr 1fr;
+    grid-template-columns: 1.25fr 3fr 2fr 1fr 1.25fr 1fr 1fr 1fr;
   }
 
   &.admin_opt {
-    grid-template-columns: 1.25fr 3fr 2fr 1fr 1.25fr 1fr 1fr 1fr;
+    grid-template-columns: 1.25fr 3fr 2fr 1fr 1.25fr 1fr 1fr 1fr 1fr;
   }
 
   &.rev_opt {
@@ -60,7 +60,7 @@
     }
 
     &.approved span {
-      background-color: rgb(0, 124, 128);
+      background-color: #007c80;
       color: $txt_clr2;
       position: relative;
 
@@ -82,12 +82,12 @@
     }
 
     &.pending span {
-      background-color: rgb(201, 201, 0);
+      background-color: #c9c900;
       color: $txt_clr2;
     }
 
     &.published span {
-      background-color: green;
+      background-color: #008000;
       color: $txt_clr2;
     }
 

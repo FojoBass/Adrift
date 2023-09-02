@@ -16,6 +16,7 @@ import {
   validatePassword,
   validateTitle,
 } from '../helpers/formHandling';
+import { userSlice } from '../features/user/userSlice';
 
 const AuthorSignUp = () => {
   const [name, setName] = useState('');
@@ -36,8 +37,18 @@ const AuthorSignUp = () => {
   const affilInputRef = useRef<HTMLInputElement | null>(null);
 
   const dispatch = useAppDispatch();
-  const { isSignedUp } = useAppSelector((state) => state.user);
+  const {
+    isSignedUp,
+    userDetails,
+    isLoggedIn,
+    isJustLoggedIn,
+    appError,
+    setupAcct,
+  } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
+
+  const { setIsSignedUp, resetAuthError, setIsJustLoggedIn, resetSetupAcct } =
+    userSlice.actions;
 
   const handleSignUpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +64,7 @@ const AuthorSignUp = () => {
       const data = {
         name,
         title,
-        email,
+        email: email.toLowerCase(),
         dept,
         password,
         affiliation,
@@ -82,6 +93,13 @@ const AuthorSignUp = () => {
       }, 3000);
     }
   }, [isSignedUp]);
+
+  useEffect(() => {
+    if (isJustLoggedIn && userDetails.id) {
+      if (!setupAcct) navigate(`/submissions/author/${userDetails.id}`);
+      dispatch(setIsJustLoggedIn(false));
+    }
+  }, [isJustLoggedIn, userDetails, setupAcct]);
 
   return (
     <AuthFormsLayout

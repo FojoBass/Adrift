@@ -58,7 +58,9 @@ const Footer = () => {
             <h3>Some Articles</h3>
 
             {otherArticles.map((article, index) => {
-              const artDate = timeConverter(article.publishedAt as string);
+              const artDate = article.publishedAt
+                ? timeConverter(article.publishedAt)
+                : new Date();
 
               return (
                 <>

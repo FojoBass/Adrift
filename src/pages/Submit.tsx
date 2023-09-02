@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import {
   inputError,
-  validateAffil,
-  validateName,
+  validateCoAuthors,
   customValidate,
 } from '../helpers/formHandling';
 import ShortUniqueId from 'short-unique-id';
@@ -28,13 +27,15 @@ const Submit = () => {
   const categoryInputRef = useRef<HTMLSelectElement | null>(null);
   const mainFileInputRef = useRef<HTMLInputElement | null>(null);
   const subFilesInputRef = useRef<HTMLInputElement | null>(null);
+  const coAuthorsRef = useRef<HTMLInputElement | null>(null);
+
+  const [coAuthors, setCoAuthors] = useState<string>('');
 
   const dispatch = useAppDispatch();
 
   const uid = new ShortUniqueId({ length: 7 });
-  const { justUploaded, isUploadingAritlce, articleError } = useAppSelector(
-    (state) => state.article
-  );
+  const { justUploaded, isUploadingAritlce, articleError, categories } =
+    useAppSelector((state) => state.article);
   const { resetJustUploaded, resetArticleError } = articleSlice.actions;
 
   const validateAbsract = (): boolean => {
@@ -58,7 +59,9 @@ const Submit = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (
+      validateCoAuthors(coAuthors, coAuthorsRef.current) &&
       customValidate(title, titleInputRef.current) &&
       validateAbsract() &&
       validateCategory() &&
@@ -75,6 +78,9 @@ const Submit = () => {
         subFiles,
         userId: userDetails.id,
         email: userDetails.email,
+        coAuthors: coAuthors.trim()
+          ? coAuthors.split(',').map((item) => item.trim())
+          : [],
       };
 
       dispatch(uploadArticle(data));
@@ -109,6 +115,7 @@ const Submit = () => {
     setCategory('default');
     setMainFile('');
     setSubFiles([]);
+    setCoAuthors('');
     if (mainFileInputRef.current) mainFileInputRef.current.value = '';
     if (subFilesInputRef.current) subFilesInputRef.current.value = '';
   };
@@ -155,6 +162,16 @@ const Submit = () => {
           <div className='form_opt'>
             <input
               type='text'
+              placeholder="Co-Authors (seperate with comma ',')"
+              value={coAuthors}
+              onChange={(e) => setCoAuthors(e.target.value)}
+              ref={coAuthorsRef}
+            />
+          </div>
+
+          <div className='form_opt'>
+            <input
+              type='text'
               placeholder="Article's title"
               onChange={(e) => setTitle(e.target.value)}
               value={title}
@@ -179,11 +196,11 @@ const Submit = () => {
               ref={categoryInputRef}
             >
               <option value='default' disabled>
-                Article subject
+                Category
               </option>
-              {subjects.map((sub) => (
-                <option value={sub} key={sub}>
-                  {sub}
+              {categories.map((categ) => (
+                <option value={categ} key={categ}>
+                  {categ}
                 </option>
               ))}
             </select>
@@ -246,12 +263,3 @@ const Submit = () => {
 };
 
 export default Submit;
-
-const subjects = [
-  'pharmaceutics',
-  'pharmacology',
-  'biological sciences',
-  'biotechnology',
-  'life sciences',
-  'arts',
-];

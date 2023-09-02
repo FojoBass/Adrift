@@ -8,6 +8,7 @@ import {
   TargetEnum,
   UserInfoInt,
   VerDataInt,
+  VolCountInt,
 } from '../types';
 import { db, auth, storage } from './firbase_config';
 import {
@@ -16,6 +17,8 @@ import {
   sendEmailVerification,
   signInWithEmailAndPassword,
   updatePassword,
+  signInWithPopup,
+  GoogleAuthProvider,
 } from 'firebase/auth';
 import {
   setDoc,
@@ -35,6 +38,8 @@ export const usersColRef = collection(db, 'users');
 export const articlesColRef = collection(db, 'articles');
 
 const uid = new ShortUniqueId({ length: 7 });
+
+const provider = new GoogleAuthProvider();
 
 export class EduJournServices {
   // *Authentication Methods
@@ -59,6 +64,10 @@ export class EduJournServices {
     return updatePassword(auth.currentUser!, password);
   }
 
+  googleSignIn() {
+    return signInWithPopup(auth, provider);
+  }
+
   // *Storage Methods
   uploadImg(userId: string, imgFile: File) {
     const imgRef = ref(storage, `avis/${userId}}`);
@@ -78,7 +87,7 @@ export class EduJournServices {
   // *Firestore Methods
   // * User
   setUserInfo(data: UserInfoInt) {
-    const modData = { ...data, imgFile: '' };
+    const modData = { ...data, password: '***', imgFile: '' };
 
     const docRef = doc(db, `users/${data.id}`);
     return setDoc(docRef, modData);
@@ -108,6 +117,11 @@ export class EduJournServices {
     const { name, title, affiliation, dept, id } = data;
     const docRef = doc(db, `users/${id}`);
     return updateDoc(docRef, { name, title, affiliation, dept });
+  }
+
+  getAuthors() {
+    const q = query(usersColRef, where('role', '==', 'author'));
+    return getDocs(q);
   }
 
   // * Article
@@ -177,17 +191,33 @@ export class EduJournServices {
     return getDoc(docRef);
   }
 
-  setVolumeCount(count: number) {
+  setVolumeCount(count: VolCountInt) {
     const docRef = doc(db, 'volume_count/vol');
-    return updateDoc(docRef, { count });
+    return updateDoc(docRef, { count: count.count, year: count.year });
   }
 
-  publishArticle(articleId: string, volCount: number) {
+  publishArticle(articleId: string, volCount: number, currentIssue: number) {
     const docRef = doc(db, `articles/${articleId}`);
     return updateDoc(docRef, {
       status: 'published',
       vol: volCount,
       publishedAt: serverTimestamp(),
+      issue: currentIssue,
     });
+  }
+
+  updateCategories(data: string[]) {
+    const docRef = doc(db, 'categories/categ');
+    return updateDoc(docRef, { list: data });
+  }
+
+  setTime() {
+    const docRef = doc(db, 'time/recent');
+    return setDoc(docRef, { date: serverTimestamp() });
+  }
+
+  getTime() {
+    const docRef = doc(db, 'time/recent');
+    return getDoc(docRef);
   }
 }

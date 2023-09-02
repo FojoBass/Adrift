@@ -17,6 +17,10 @@ const DashBoardOverlayLayout: React.FC<DBLPropInt> = ({ type, children }) => {
     setEditorsArticleId,
     setIsAddTeam,
     setIsSettings,
+    setIsCategories,
+    setAuthorsArticleId,
+    setIsAuthors,
+    isAuthors,
   } = useGlobalContext();
 
   const handleCloseClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -50,6 +54,18 @@ const DashBoardOverlayLayout: React.FC<DBLPropInt> = ({ type, children }) => {
         setIsSettings && setIsSettings(false);
         break;
 
+      case 'categories':
+        setIsCategories && setIsCategories(false);
+        break;
+
+      case 'authors':
+        setAuthorsArticleId && setAuthorsArticleId('');
+        break;
+
+      case 'all authors':
+        setIsAuthors && setIsAuthors(false);
+        break;
+
       default:
         return;
     }
@@ -57,7 +73,10 @@ const DashBoardOverlayLayout: React.FC<DBLPropInt> = ({ type, children }) => {
 
   return (
     <section className='dbl_sect'>
-      <div className='dbl_sect_wrapper'>
+      <div
+        className='dbl_sect_wrapper'
+        style={isAuthors ? { width: '1300px' } : {}}
+      >
         <h3 className='sect_heading'>
           {type}
           <button className='close_btn' onClick={handleCloseClick}>

@@ -101,12 +101,40 @@
             margin-bottom: 10px;
           }
 
-          .author_name {
+          .category {
+            text-transform: capitalize;
+            color: $txt_clr3;
+            margin-top: 10px;
+            background-color: $box_shd_tint;
+            width: fit-content;
+            padding: 5px 10px;
+            font-weight: bold;
+            border-radius: $brd_rad_small;
+          }
+
+          .authors {
             color: $txt_clr3;
             font-style: italic;
 
-            .icon {
-              margin-right: 5px;
+            .author {
+              @include flexDisplay(center, flex-start);
+
+              .name {
+                margin-left: 10px;
+              }
+            }
+
+            .co_authors {
+              margin-top: 3px;
+
+              .heading {
+                margin-right: 5px;
+                font-style: normal;
+              }
+
+              .co_name {
+                margin-right: 10px;
+              }
             }
           }
         }

@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../app/store';
 import { articleSlice } from '../features/article/articleSlice';
 import {
   updateStatus,
-  getVolumeCount,
+  // getVolumeCount,
   publishArticle,
 } from '../features/article/articleAsyncuThunk';
 
@@ -23,7 +23,6 @@ const Dashboard = () => {
     window.scrollTo(0, 0);
     if (isLoggedIn) navigate(`${userDetails.role}/${userDetails.id}`);
     else {
-      console.log('Called');
       toast.info('Login to access page', { toastId: 'login_toast' });
       navigate('/login');
     }
