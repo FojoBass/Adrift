@@ -32,10 +32,9 @@ export const uploadArticle = createAsyncThunk<void, FormDataInt>(
     let subUrls: string[] = [];
     try {
       if (payload.subFiles.length && typeof payload.subFiles !== 'string') {
-        [...payload.subFiles].forEach(async (file) => {
-          const url = await uploadFile(file, id, false, '', subUrls);
-          // subUrls.push(url);
-        });
+        for (let i = 0; i < payload.subFiles.length; i++) {
+          await uploadFile(payload.subFiles[i], id, false, '', subUrls);
+        }
       }
 
       //* upload main file
