@@ -162,24 +162,45 @@ const Comments = () => {
           <div className='comments'>
             {reviewerArticles
               .find((art) => art.id === commentArticleId)
-              ?.comments.reviewers.map((comment) => (
-                <article
-                  key={v4()}
-                  className={`comment ${
-                    comment.senderId === userDetails.id ? 'my_msg' : ''
-                  }`}
-                >
-                  <p className='msg_wrapper'>{comment.message}</p>
-                  <div className='footer'>
-                    <span className='msg_sender'>
-                      {comment.senderId === userDetails.id
-                        ? 'Me'
-                        : comment.name}
-                    </span>
-                    <span className='msg_time'>17/02/1999 20:00</span>
-                  </div>
-                </article>
-              ))}
+              ?.comments.reviewers.map((comment) => {
+                const commentTime = timeConverter(comment.timestamp);
+                return (
+                  <article
+                    key={v4()}
+                    className={`comment ${
+                      comment.senderId === userDetails.id ? 'my_msg' : ''
+                    }`}
+                  >
+                    <p className='msg_wrapper'>{comment.message}</p>
+                    <div className='footer'>
+                      <span className='msg_sender'>
+                        {comment.senderId === userDetails.id
+                          ? 'Me'
+                          : comment.name}
+                      </span>
+                      <span className='msg_time'>
+                        <span className='date_wrapper'>
+                          {commentTime.getDate()} /{' '}
+                          {String(commentTime.getMonth()).length < 2
+                            ? `0${commentTime.getMonth()}`
+                            : commentTime.getMonth()}{' '}
+                          / {String(commentTime.getFullYear()).slice(2)}
+                        </span>
+
+                        <span className='time_wrapper'>
+                          {String(commentTime.getHours()).length < 2
+                            ? `0${commentTime.getHours()}`
+                            : commentTime.getHours()}{' '}
+                          :{' '}
+                          {String(commentTime.getMinutes()).length < 2
+                            ? `0${commentTime.getMinutes()}`
+                            : commentTime.getMinutes()}
+                        </span>
+                      </span>
+                    </div>
+                  </article>
+                );
+              })}
           </div>
         ) : userDetails.role === 'editor' ? (
           <AdminEditorComment

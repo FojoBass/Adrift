@@ -5,8 +5,8 @@
   background-color: $bg_main;
   z-index: 100;
   overflow-y: auto;
-  // padding-block: 20px;
-  @include flexDisplay(center, center);
+  display: flex;
+  padding-block: 20px;
 
   &_wrapper {
     width: 500px;
@@ -15,6 +15,7 @@
     overflow: hidden;
     border-radius: $brd_rad;
     padding: 20px;
+    margin: auto;
   }
 
   .auth_heading {
