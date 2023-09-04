@@ -24,7 +24,9 @@ const AllAuthors = () => {
 
   useEffect(() => {
     const modDispAuth = allAuthors.filter(
-      (auth) => auth.name.includes(searchValue) || auth.id.includes(searchValue)
+      (auth) =>
+        auth.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+        auth.id.includes(searchValue)
     );
     setGrandDispAuths(modDispAuth);
   }, [searchValue, allAuthors]);
@@ -61,29 +63,28 @@ const AllAuthors = () => {
           'Loading...'
         ) : (
           <>
+            <header>
+              <input
+                type='text'
+                placeholder='Search name or id'
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+
+              <select
+                name=''
+                id=''
+                className='page_wrapper'
+                value={currentPage}
+                onChange={(e) => setCurrentPage(Number(e.target.value))}
+              >
+                {pageArr.map((pg, ind) => (
+                  <option value={ind + 1}>{ind + 1}</option>
+                ))}
+              </select>
+            </header>
             {dispAuthors.length ? (
               <>
-                <header>
-                  <input
-                    type='text'
-                    placeholder='Search name or id'
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                  />
-
-                  <select
-                    name=''
-                    id=''
-                    className='page_wrapper'
-                    value={currentPage}
-                    onChange={(e) => setCurrentPage(Number(e.target.value))}
-                  >
-                    {pageArr.map((pg, ind) => (
-                      <option value={ind + 1}>{ind + 1}</option>
-                    ))}
-                  </select>
-                </header>
-
                 <div className='main_sect'>
                   <header>
                     <h4 className='head_title'>Id</h4>
@@ -125,7 +126,7 @@ const AllAuthors = () => {
                       ).length;
                       return (
                         <article className='auth_info_wrapper' key={auth.id}>
-                          <p className='auth_info'>
+                          <p className='auth_info' title={auth.id}>
                             {auth.id.slice(0, 3)}...
                             {auth.id.slice(auth.id.length - 3)}
                           </p>
