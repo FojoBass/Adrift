@@ -15,6 +15,7 @@ import { db } from '../services/firbase_config';
 import { ArticleInfoInt, VerUrlsInt } from '../types';
 import { articleSlice } from '../features/article/articleSlice';
 import { EduJournServices } from '../services/EduJournServices';
+import { timeConverter } from '../helpers/timeConverter';
 
 // TODO SET UP VER URLS FOR PUBLISHE ARTICLES
 
@@ -31,6 +32,8 @@ const SingleArticle = () => {
   const [isViewFull, setIsViewFull] = useState(false);
 
   const [relatedArticles, setRelatedArticles] = useState<ArticleInfoInt[]>([]);
+
+  const [pubAt, setPubAt] = useState(new Date());
 
   const fetchVersions = async () => {
     const querySnapshot = await new EduJournServices().getVersions(id ?? '');
@@ -87,6 +90,12 @@ const SingleArticle = () => {
   }, [id]);
 
   useEffect(() => {
+    if (currentArticle) {
+      setPubAt(timeConverter(currentArticle.publishedAt));
+    }
+  }, [currentArticle]);
+
+  useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
@@ -135,7 +144,19 @@ const SingleArticle = () => {
                           </div>
                         )}
                     </div>
-                    <p className='category'>{currentArticle.category}</p>
+                    <p className='category_wrapper'>
+                      <span className='category'>
+                        {currentArticle.category}
+                      </span>
+
+                      <span className='pub_date'>
+                        {pubAt.getDate()} /{' '}
+                        {String(pubAt.getMonth()).length < 2
+                          ? `0${pubAt.getMonth()}`
+                          : pubAt.getMonth()}{' '}
+                        / {String(pubAt.getFullYear()).slice(2)}
+                      </span>
+                    </p>
                   </div>
                 </header>
 

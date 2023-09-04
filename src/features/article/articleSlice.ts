@@ -8,6 +8,7 @@ import {
   uploadVersion,
   updateAbstract,
   updateCateg,
+  delArticle,
 } from './articleAsyncuThunk';
 import {
   ArticleInfoInt,
@@ -52,6 +53,9 @@ interface InitialStateInt {
   justPublished: boolean;
   categories: string[];
   isPublishingFailed: boolean;
+  isDeleting: boolean;
+  justDeleted: boolean;
+  isDeletingFailed: boolean;
 }
 
 const initialState: InitialStateInt = {
@@ -88,6 +92,9 @@ const initialState: InitialStateInt = {
   isPublishing: false,
   justPublished: false,
   isPublishingFailed: false,
+  isDeleting: false,
+  justDeleted: false,
+  isDeletingFailed: false,
   categories: [],
   currentIssue: 0,
 };
@@ -334,7 +341,13 @@ export const articleSlice = createSlice({
       state.justUpdatedCateg = false;
     },
     resetIsUpdatingCategFailed(state, action) {
-      state.justUpdatedCateg = false;
+      state.isUpdatingCategFailed = false;
+    },
+    resetJustDeleted(state, action) {
+      state.justDeleted = false;
+    },
+    resetIsDeletingFailed(state, action) {
+      state.isDeletingFailed = false;
     },
     setCurrentIssue(state, action) {
       state.currentIssue = action.payload;
@@ -430,6 +443,19 @@ export const articleSlice = createSlice({
       .addCase(updateCateg.rejected, (state, error) => {
         state.isUpdatingCateg = false;
         state.isUpdatingCategFailed = true;
+        console.log(error);
+      });
+    builder
+      .addCase(delArticle.pending, (state) => {
+        state.isDeleting = true;
+      })
+      .addCase(delArticle.fulfilled, (state, action) => {
+        state.isDeleting = false;
+        state.justDeleted = true;
+      })
+      .addCase(delArticle.rejected, (state, error) => {
+        state.isDeleting = false;
+        state.isDeletingFailed = true;
         console.log(error);
       });
   },

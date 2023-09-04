@@ -171,7 +171,7 @@ export const getAuthors = createAsyncThunk<UserInfoInt[], void>(
         allAuthors.push(doc.data() as UserInfoInt);
       });
 
-      console.log('all authors: ', allAuthors);
+      
 
       return allAuthors;
     } catch (error) {

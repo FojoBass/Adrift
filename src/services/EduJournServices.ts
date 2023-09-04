@@ -31,6 +31,7 @@ import {
   updateDoc,
   getDoc,
   serverTimestamp,
+  deleteDoc,
 } from 'firebase/firestore';
 import ShortUniqueId from 'short-unique-id';
 
@@ -219,5 +220,10 @@ export class EduJournServices {
   getTime() {
     const docRef = doc(db, 'time/recent');
     return getDoc(docRef);
+  }
+
+  delArticle(articleId: string) {
+    const docRef = doc(db, `articles/${articleId}`);
+    return deleteDoc(docRef);
   }
 }

@@ -43,6 +43,8 @@ export const uploadFile = (
           } else reject('Avi upload failed');
         });
 
+        console.log('suburls in: ', subUrls);
+
         updateMetadata(uploadTask.snapshot.ref, {
           contentDisposition: `attachment; filename*=utf-8''${file.name}`,
         }).then((metadata) => {});

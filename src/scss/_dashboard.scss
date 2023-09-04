@@ -16,6 +16,11 @@
     z-index: 1;
   }
 
+  &.rejected_super_wrapper:hover .categ_col .del_btn {
+    opacity: 1;
+    z-index: 1;
+  }
+
   &.author_opt {
     grid-template-columns: 1.25fr 3fr 2fr 1fr 1.25fr 1fr;
   }
@@ -42,6 +47,23 @@
     &.status_col,
     &.categ_col {
       text-transform: capitalize;
+    }
+
+    &.categ_col {
+      position: relative;
+
+      .del_btn {
+        @include position(absolute, left, top, 50%, 50%);
+        width: 70%;
+        height: 70%;
+        cursor: pointer;
+        background-color: $spc_clr;
+        opacity: 0;
+        z-index: -1;
+        @include transitionAll($vfast_trans);
+        color: $txt_clr2;
+        border-radius: $brd_rad_small;
+      }
     }
 
     &.status_col {

@@ -20,6 +20,7 @@ import {
 import { articleSlice } from './articleSlice';
 import { RootState } from '../../app/store';
 import { db } from '../../services/firbase_config';
+import { log } from 'console';
 
 const eduJournServices = new EduJournServices();
 
@@ -124,11 +125,12 @@ export const uploadVersion = createAsyncThunk<
 
   try {
     if (payload.subFiles.length && typeof payload.subFiles !== 'string') {
-      [...payload.subFiles].forEach(async (file) => {
-        const url = await uploadFile(file, id, false, '', subUrls);
-        // subUrls.push(url);
-      });
+      for (let i = 0; i < payload.subFiles.length; i++) {
+        await uploadFile(payload.subFiles[i], id, false, '', subUrls);
+      }
     }
+
+    console.log('suburls ut: ', subUrls);
 
     //* upload main file
     const mainUrl = payload.mainFile
@@ -222,6 +224,18 @@ export const updateCateg = createAsyncThunk<void, string[]>(
       await eduJournServices.updateCategories(payload);
     } catch (error) {
       thunkApi.rejectWithValue(`Updating categories ${error}`);
+    }
+  }
+);
+
+// * Delete Article
+export const delArticle = createAsyncThunk<void, string>(
+  'article/delArticle',
+  async (payload, thunkApi) => {
+    try {
+      await eduJournServices.delArticle(payload);
+    } catch (error) {
+      thunkApi.rejectWithValue(`Deleting Article ${error}`);
     }
   }
 );

@@ -32,7 +32,9 @@ const Authors = () => {
         <div className='author_wrapper'>
           <div className='main_auth'>
             <h3>Author</h3>
-            <p className='author_name'>{currentArticle.author}</p>
+            <p className='author_name'>
+              {currentArticle.author} ({currentArticle.email})
+            </p>
           </div>
 
           {currentArticle.coAuthors.length ? (

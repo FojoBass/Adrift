@@ -13,7 +13,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './pages/components/Navbar';
 import Footer from './pages/components/Footer';
-import Archives from './pages/Archives';
+import Articles from './pages/Articles';
 import AuthorDashboard from './pages/components/dashboard/AuthorDashboard';
 import EditorDashboard from './pages/components/dashboard/EditorDashboard';
 import ReviewerDashboard from './pages/components/dashboard/ReviewerDashboard';
@@ -329,7 +329,7 @@ function App() {
               process.env.REACT_APP_EMAIL_PUBLIC_KEY ?? ''
             )
             .then((response) => {
-              toast.success('Approval mail sent');
+              toast.info('Approval mail sent');
             })
             .catch((error) => {
               toast.error('Approval mail not sent');
@@ -353,10 +353,10 @@ function App() {
               process.env.REACT_APP_EMAIL_PUBLIC_KEY ?? ''
             )
             .then((response) => {
-              toast.success('Approval mail sent');
+              toast.info('Rejection mail sent');
             })
             .catch((error) => {
-              toast.error('Approval mail not sent');
+              toast.error('Rejection mail not sent');
             });
           break;
 
@@ -481,7 +481,7 @@ function App() {
     createRoutesFromElements(
       <Route path='/' element={<Root />} errorElement={<Error />}>
         <Route index element={<Home />} />
-        <Route path='archives' element={<Archives />} />
+        <Route path='archives' element={<Articles />} />
         <Route path='dashboard' element={<Dashboard />}>
           <Route path='author/:id' element={<AuthorDashboard />} />
           <Route path='editor/:id' element={<EditorDashboard />} />

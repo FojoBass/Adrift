@@ -229,6 +229,8 @@ const SubModal: React.FC<SubModalPropInt> = ({ type, article, closeModal }) => {
     e.preventDefault();
 
     if (validateMainFile()) {
+      console.log('subFiles: ', subFiles);
+
       dispatch(
         uploadVersion({
           mainFile,

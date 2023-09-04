@@ -101,15 +101,25 @@
             margin-bottom: 10px;
           }
 
-          .category {
-            text-transform: capitalize;
-            color: $txt_clr3;
+          .category_wrapper {
             margin-top: 10px;
-            background-color: $box_shd_tint;
-            width: fit-content;
-            padding: 5px 10px;
-            font-weight: bold;
-            border-radius: $brd_rad_small;
+            @include flexDisplay(center, space-between);
+
+            .category {
+              text-transform: capitalize;
+              color: $txt_clr3;
+              background-color: $box_shd_tint;
+              width: fit-content;
+              padding: 5px 10px;
+              font-weight: bold;
+              border-radius: $brd_rad_small;
+            }
+
+            .pub_date {
+              margin-right: 30px;
+              font-style: italic;
+              color: $txt_clr3;
+            }
           }
 
           .authors {

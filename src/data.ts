@@ -19,7 +19,7 @@ export const navLinks = [
   },
   {
     url: '/archives',
-    title: 'Archives',
+    title: 'Articles',
   },
   {
     url: '/dashboard',

@@ -22,7 +22,10 @@ import { usePaystackPayment } from 'react-paystack';
 import { PaystackProps } from 'react-paystack/dist/types';
 import ShortUniqueId from 'short-unique-id';
 import { toast } from 'react-toastify';
-import { updateStatus } from '../../../features/article/articleAsyncuThunk';
+import {
+  delArticle,
+  updateStatus,
+} from '../../../features/article/articleAsyncuThunk';
 
 interface DashBoardContentsInt {
   article: ArticleInfoInt;
@@ -47,14 +50,22 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
     setSendMail,
     setIsReload,
     setAuthorsArticleId,
+    setConfirmations,
+    affirm,
+    setAffirm,
   } = useGlobalContext();
   const { isLoggedIn, userDetails } = useAppSelector((state) => state.user);
+  const { isDeleting, isDeletingFailed, justDeleted } = useAppSelector(
+    (state) => state.article
+  );
   const {
     setAuthorComments,
     setReviewersComments,
     setEditorsComments,
     setVersions,
     setInitialLoading,
+    resetIsDeletingFailed,
+    resetJustDeleted,
   } = articleSlice.actions;
   const dispatch = useAppDispatch();
   const reference: string = uid();
@@ -90,6 +101,15 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
   // you can call this function anything
   const onClose = () => {
     toast.info('Payment canceled');
+  };
+
+  const handleDelClick = () => {
+    setConfirmations &&
+      setConfirmations({
+        isShow: true,
+        msg: 'delete article',
+        type: `delete_${article.id}`,
+      });
   };
 
   const handlePublishClick = () => {
@@ -276,29 +296,55 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
     }
   }, [userDetails]);
 
-  // * This is the logic for setting 'new' tag for unread comments
-  // Todo Create 4 variables for new comments (3 for author, reviewers, and editors, then the last one is the general one)
-  // todo Use the general for both author and reviwer  acct types
-  //  todo for editor and admin, set general using or condition of the other 3
-  // todo In this file, check all comments to see if the current userId is in the readers, if not, set the respective "new comment variable" to true
-  // todo set the respective new comment variable to false once the commentArticleId is populated (will be complex for editors and admin)
+  useEffect(() => {
+    if (justDeleted) {
+      toast.success('Article deleted', { toastId: 'del_toast' });
+      dispatch(resetJustDeleted(''));
+    }
+
+    if (isDeletingFailed) {
+      toast.error('Deleting failed', { toastId: 'del_toast' });
+      dispatch(resetIsDeletingFailed(''));
+    }
+  }, [justDeleted, isDeletingFailed]);
+
+  useEffect(() => {
+    if (affirm) {
+      const id = affirm.type.split('_')[1];
+      if (affirm.type.includes('delete') && article.id === id) {
+        dispatch(delArticle(id));
+        setAffirm && setAffirm({ state: false, type: '' });
+      }
+    }
+  }, [affirm, setAffirm]);
 
   return (
     <>
       <div
         className={`main_opt ${roleClass} ${article.status}_super_wrapper`}
         key={v4()}
+        style={isDeleting ? { opacity: '0.5', pointerEvents: 'none' } : {}}
       >
         <div className='id_col col'>{article.id}</div>
         <div className='title_col col'>{article.title}</div>
-        <div className='categ_col col'>{article.category}</div>
+        <div className='categ_col col'>
+          {article.category}
+
+          {userDetails.role === 'admin' &&
+            article.status === StatusEnum.rej && (
+              <button className='del_btn' onClick={handleDelClick}>
+                Delete
+              </button>
+            )}
+        </div>
 
         {userDetails.role !== 'reviewer' && (
           <button
             className={`status_col col ${
               (userDetails.role === 'editor' || userDetails.role === 'admin') &&
               article.status !== 'published' &&
-              article.status !== 'approved'
+              article.status !== 'approved' &&
+              article.status !== 'pending'
                 ? 'hover'
                 : article.status === 'approved' && userDetails.role === 'admin'
                 ? 'hover'
@@ -307,7 +353,8 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
             onClick={
               (userDetails.role === 'editor' || userDetails.role === 'admin') &&
               article.status !== 'published' &&
-              article.status !== 'approved'
+              article.status !== 'approved' &&
+              article.status !== 'pending'
                 ? () => setStatusArticleId && setStatusArticleId(article.id)
                 : article.status === 'approved' && userDetails.role === 'admin'
                 ? () => setStatusArticleId && setStatusArticleId(article.id)
