@@ -26,10 +26,10 @@ export const navLinks = [
     title: 'Dashboard',
   },
 
-  {
-    url: '/our_team',
-    title: 'Team',
-  },
+  // {
+  //   url: '/our_team',
+  //   title: 'Team',
+  // },
   {
     url: '/submissions',
     title: 'Submit Paper',
@@ -37,10 +37,10 @@ export const navLinks = [
 ];
 
 export const quickLinks = [
-  {
-    url: '/our_team',
-    title: 'Our Team',
-  },
+  // {
+  //   url: '/our_team',
+  //   title: 'Our Team',
+  // },
   {
     url: '/archives',
     title: 'Journal Articles',

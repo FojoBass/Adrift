@@ -107,7 +107,7 @@ const About = () => {
         </div>
       </div>
 
-      <Link to='/our_team'>Meet our team</Link>
+      {/* <Link to='/our_team'>Meet our team</Link> */}
     </section>
   );
 };
