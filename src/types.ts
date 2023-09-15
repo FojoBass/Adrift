@@ -68,6 +68,7 @@ export interface CommentInt {
   message: string;
   readers: string[];
   name: string;
+  id: string;
 }
 
 export interface SendCommentInt {

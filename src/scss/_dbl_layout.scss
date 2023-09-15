@@ -20,7 +20,7 @@
 
       .close_btn {
         @include position(absolute, right, top, 0, 50%);
-        color: $spc_clr;
+        color: #ff0000;
       }
     }
   }
@@ -321,7 +321,7 @@
 
     .close_btn {
       @include position(absolute, right, top, 20px, 20px);
-      color: $spc_clr;
+      color: #ff0000;
       font-size: $txt_size9;
     }
 

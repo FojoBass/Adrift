@@ -26,6 +26,7 @@ import {
   delArticle,
   updateStatus,
 } from '../../../features/article/articleAsyncuThunk';
+import { BsBellFill } from 'react-icons/bs';
 
 interface DashBoardContentsInt {
   article: ArticleInfoInt;
@@ -69,6 +70,8 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
   } = articleSlice.actions;
   const dispatch = useAppDispatch();
   const reference: string = uid();
+
+  const [isNewComments, setIsNewComments] = useState(false);
 
   const paystackConfig: PaystackProps = {
     email: userDetails.email,
@@ -318,6 +321,96 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
     }
   }, [affirm, setAffirm]);
 
+  useEffect(() => {
+    if (article.comments) {
+      switch (userDetails.role) {
+        case 'author':
+          if (article.comments.author.length) {
+            let isNew: boolean = false;
+            for (let i = article.comments.author.length - 1; i >= 0; i--) {
+              if (
+                !article.comments.author[i].readers.find(
+                  (reader) => reader === userDetails.id
+                )
+              ) {
+                isNew = true;
+                break;
+              } else if (i === article.comments.author.length - 1) break;
+            }
+
+            setIsNewComments(isNew);
+          }
+          break;
+
+        case 'reviewer':
+          if (article.comments.reviewers.length) {
+            let isNew: boolean = false;
+
+            for (let i = article.comments.reviewers.length - 1; i >= 0; i--) {
+              if (
+                !article.comments.reviewers[i].readers.find(
+                  (reader) => reader === userDetails.id
+                )
+              ) {
+                isNew = true;
+                break;
+              } else if (i === article.comments.reviewers.length - 1) break;
+            }
+
+            setIsNewComments(isNew);
+          }
+          break;
+
+        case 'editor':
+        case 'admin':
+          let isNew: boolean = false;
+          if (article.comments.author.length) {
+            for (let i = article.comments.author.length - 1; i >= 0; i--) {
+              if (
+                !article.comments.author[i].readers.find(
+                  (reader) => reader === userDetails.id
+                )
+              ) {
+                isNew = true;
+                break;
+              } else if (i === article.comments.author.length - 1) break;
+            }
+          }
+
+          if (article.comments.reviewers.length && !isNew) {
+            for (let i = article.comments.reviewers.length - 1; i >= 0; i--) {
+              if (
+                !article.comments.reviewers[i].readers.find(
+                  (reader) => reader === userDetails.id
+                )
+              ) {
+                isNew = true;
+                break;
+              } else if (i === article.comments.reviewers.length - 1) break;
+            }
+          }
+
+          if (article.comments.reviewers.length && !isNew) {
+            for (let i = article.comments.reviewers.length - 1; i >= 0; i--) {
+              if (
+                !article.comments.reviewers[i].readers.find(
+                  (reader) => reader === userDetails.id
+                )
+              ) {
+                isNew = true;
+                break;
+              } else if (i === article.comments.editors.length - 1) break;
+            }
+          }
+          setIsNewComments(isNew);
+          break;
+
+        default:
+          return;
+      }
+    }
+  }, [article, userDetails]);
+
   return (
     <>
       <div
@@ -394,6 +487,11 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
                     article.comments.reviewers?.length +
                     article.comments.editors?.length
               }`}
+          {isNewComments && (
+            <span className='new_tag'>
+              <BsBellFill />
+            </span>
+          )}
         </button>
 
         <button

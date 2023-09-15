@@ -44,6 +44,20 @@
     border-right: 1px solid $box_shd_tint;
     // font-size: $txt_size1;
 
+    &.comment_col {
+      position: relative;
+
+      &:hover .new_tag {
+        color: #8d0000;
+      }
+
+      .new_tag {
+        @include position(absolute, right, top, 10px, 10px);
+        color: #ff0000;
+        font-size: $txt_size1;
+      }
+    }
+
     &.status_col,
     &.categ_col {
       text-transform: capitalize;

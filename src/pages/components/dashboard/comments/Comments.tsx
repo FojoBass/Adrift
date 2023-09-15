@@ -16,9 +16,7 @@ import {
   TargetEnum,
 } from '../../../../types';
 import { timeConverter } from '../../../../helpers/timeConverter';
-
-// TODO Fix comment height and add overflow when it reaches a certain height
-// TODO When new comment comes in our user enters comments, scroll to the bottom of the comments
+import { EduJournServices } from '../../../../services/EduJournServices';
 
 const Comments = () => {
   const { userDetails } = useAppSelector((state) => state.user);
@@ -35,6 +33,8 @@ const Comments = () => {
   const [displayArticle, setDisplayArticle] = useState<ArticleInfoInt | null>(
     null
   );
+
+  const eduJourn = new EduJournServices();
 
   const handleSubmit = (target: TargetEnum) => {
     if (message) {
@@ -67,6 +67,58 @@ const Comments = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (userDetails.role === 'author' && displayArticle) {
+      const latestComment =
+        displayArticle.comments.author[
+          displayArticle.comments.author.length - 1
+        ];
+
+      if (
+        latestComment &&
+        !latestComment.readers.find((reader) => reader === userDetails.id)
+      ) {
+        (function async() {
+          try {
+            eduJourn.viewComment(
+              latestComment.id,
+              [...latestComment.readers, userDetails.id],
+              displayArticle.id,
+              TargetEnum.auth
+            );
+          } catch (err) {
+            console.log(`Failed to update comment ${err}`);
+          }
+        })();
+      }
+    }
+
+    if (userDetails.role === 'reviewer' && displayArticle) {
+      const latestComment =
+        displayArticle.comments.reviewers[
+          displayArticle.comments.reviewers.length - 1
+        ];
+
+      if (
+        latestComment &&
+        !latestComment.readers.find((reader) => reader === userDetails.id)
+      ) {
+        (function async() {
+          try {
+            eduJourn.viewComment(
+              latestComment.id,
+              [...latestComment.readers, userDetails.id],
+              displayArticle.id,
+              TargetEnum.rev
+            );
+          } catch (err) {
+            console.log(`Failed to update comment ${err}`);
+          }
+        })();
+      }
+    }
+  }, [userDetails, displayArticle]);
 
   useEffect(() => {
     if (commentArticleId) {

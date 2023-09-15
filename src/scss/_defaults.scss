@@ -126,7 +126,7 @@ img {
       .close_btn {
         align-self: flex-end;
         @include position(absolute, right, top, 0px, 50%);
-        color: $spc_clr;
+        color: #ff0000;
       }
     }
 

@@ -169,14 +169,13 @@ export class EduJournServices {
   }
 
   setComment(data: SendCommentPayloadInt) {
+    const id = uid();
     const docRef = doc(
       db,
-      `articles/${data.articleId}/comments/${data.articleId}/${
-        data.target
-      }/${uid()}`
+      `articles/${data.articleId}/comments/${data.articleId}/${data.target}/${id}`
     );
 
-    return setDoc(docRef, data.data);
+    return setDoc(docRef, { ...data.data, id });
   }
 
   getComments(articleId: string, target: TargetEnum) {
@@ -185,6 +184,19 @@ export class EduJournServices {
       `articles/${articleId}/comments/${articleId}/${target}`
     );
     return getDocs(collectionRef);
+  }
+
+  viewComment(
+    commentId: string,
+    readers: string[],
+    articleId: string,
+    target: TargetEnum
+  ) {
+    const docRef = doc(
+      db,
+      `articles/${articleId}/comments/${articleId}/${target}/${commentId}`
+    );
+    return updateDoc(docRef, { readers });
   }
 
   getVersions(articleId: string) {
