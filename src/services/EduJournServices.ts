@@ -19,6 +19,7 @@ import {
   updatePassword,
   signInWithPopup,
   GoogleAuthProvider,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import {
   setDoc,
@@ -67,6 +68,10 @@ export class EduJournServices {
 
   googleSignIn() {
     return signInWithPopup(auth, provider);
+  }
+
+  forgotPword(email: string) {
+    return sendPasswordResetEmail(auth, email);
   }
 
   // *Storage Methods

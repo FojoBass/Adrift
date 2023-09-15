@@ -51,13 +51,16 @@
     display: inline-block;
     position: relative;
     left: 50%;
-    color: $spc_clr;
+    background-color: $spc_clr;
     text-transform: uppercase;
-    padding: 20px 0;
     transform: translateX(-50%);
+    color: $txt_clr2;
+    margin: 10px 0 20px;
+    padding: 10px 25px;
+    border-radius: $brd_rad_small;
 
     &:hover {
-      text-decoration: underline;
+      background-color: darken($spc_clr, 10);
     }
   }
 }

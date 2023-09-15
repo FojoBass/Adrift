@@ -7,7 +7,10 @@ import {
   StatusEnum,
   UserInfoInt,
 } from '../../../types';
-import { assignTeam } from '../../../features/article/articleAsyncuThunk';
+import {
+  assignTeam,
+  updateStatus,
+} from '../../../features/article/articleAsyncuThunk';
 import { articleSlice } from '../../../features/article/articleSlice';
 import { toast } from 'react-toastify';
 
@@ -49,7 +52,19 @@ const Assign: React.FC<AssignInt> = ({ assignType }) => {
   };
 
   const handleUpdate = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (assignType === 'reviewer')
+    if (assignType === 'reviewer') {
+      if (
+        !displayArticle?.assReviewers.length &&
+        displayArticle?.status === StatusEnum.sub
+      ) {
+        dispatch(
+          updateStatus({
+            status: StatusEnum.rev ?? '',
+            articleId: displayArticle.id ?? '',
+          })
+        );
+      }
+
       dispatch(
         assignTeam({
           opts: selectedOpts,
@@ -57,6 +72,7 @@ const Assign: React.FC<AssignInt> = ({ assignType }) => {
           articleId: reviewersArticleId ?? '',
         })
       );
+    }
 
     if (assignType === 'editor')
       dispatch(
@@ -67,6 +83,19 @@ const Assign: React.FC<AssignInt> = ({ assignType }) => {
         })
       );
   };
+
+  useEffect(() => {
+    if (
+      !displayArticle?.assReviewers.length &&
+      displayArticle?.status === StatusEnum.rev
+    )
+      dispatch(
+        updateStatus({
+          status: StatusEnum.sub ?? '',
+          articleId: displayArticle.id ?? '',
+        })
+      );
+  }, [displayArticle]);
 
   useEffect(() => {
     if (userDetails.role === 'editor') setCurrentArticles(editorArticles);

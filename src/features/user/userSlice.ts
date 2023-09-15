@@ -8,6 +8,7 @@ import {
   updatePassWord,
   getAuthors,
   googleSignIn,
+  forgotPword,
 } from './userAsyncThunk';
 import { UserInfoInt } from '../../types';
 
@@ -35,6 +36,9 @@ interface IntialStateInt {
   isFetchingAllAuthors: boolean;
   isFetchAllAuthorsFailed: boolean;
   setupAcct: boolean;
+  isRequesting: boolean;
+  isRequestingFailed: boolean;
+  justRequested: boolean;
 }
 
 const initialState: IntialStateInt = {
@@ -70,6 +74,9 @@ const initialState: IntialStateInt = {
   isFetchingAllAuthors: false,
   isFetchAllAuthorsFailed: false,
   setupAcct: false,
+  isRequesting: false,
+  isRequestingFailed: false,
+  justRequested: false,
 };
 
 export const userSlice = createSlice({
@@ -123,6 +130,12 @@ export const userSlice = createSlice({
     },
     resetSetupAcct(state, action) {
       state.setupAcct = false;
+    },
+    resetIsRequestingFailed(state, action) {
+      state.isRequestingFailed = false;
+    },
+    resetJustRequested(state, action) {
+      state.justRequested = false;
     },
   },
   extraReducers: (builder) => {
@@ -237,6 +250,19 @@ export const userSlice = createSlice({
       .addCase(getAuthors.rejected, (state, error) => {
         state.isFetchAllAuthorsFailed = true;
         state.isFetchingAllAuthors = false;
+      });
+    // * Forgot Password
+    builder
+      .addCase(forgotPword.pending, (state) => {
+        state.isRequesting = true;
+      })
+      .addCase(forgotPword.fulfilled, (state, action) => {
+        state.isRequesting = false;
+        state.justRequested = true;
+      })
+      .addCase(forgotPword.rejected, (state, error) => {
+        state.isRequesting = false;
+        state.isRequestingFailed = true;
       });
   },
 });

@@ -1,4 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&display=swap');
 // * Variables
+$fnt_logo: 'Cedarville Cursive', cursive;
 $vfast_trans: 0.1s;
 $fast_trans: 0.2s;
 $fmid_trans: 0.3s;
@@ -17,20 +19,27 @@ $txt_size8: 2.8rem;
 $txt_size9: 3rem;
 $txt_size_xlrg: 4.5rem;
 $bg_main: #ffffff;
-$bg_sub: #edf2f6;
+// $bg_sub: #edf2f6;
+$bg_sub: #f7e9d1;
 $bg_over: #0021364f;
 $bg_sub2: #edf2f636;
-$spc_clr: #d30015;
-$spc_clr_tint: #d3001571;
-$acc_clr: #337ab7;
-$box_shd: #808080;
-$box_shd_tint: #80808046;
+// $spc_clr: #d30015;
+$spc_clr: #337ab7;
+// $spc_clr: #d35400;
+// $spc_clr_tint: #d3001571;
+$spc_clr_tint: #337ab771;
+// $acc_clr: #337ab7;
+$acc_clr: #e67e22;
+// $box_shd: #808080;
+$box_shd: #8080804d;
+$box_shd_tint: #8080804d;
 $brd_rad: 10px;
 $brd_rad_small: 5px;
 $brd_rad_big: 15px;
 $txt_clr1: #000;
 $txt_clr2: #fff;
-$txt_clr3: #4e4e4e;
+// $txt_clr3: #4e4e4e;
+$txt_clr3: #5d463f;
 
 // * Mixins
 @mixin transitionAll($duration) {

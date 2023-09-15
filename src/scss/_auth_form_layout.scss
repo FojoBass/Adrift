@@ -10,7 +10,7 @@
 
   &_wrapper {
     width: 500px;
-    background-color: $bg_sub;
+    background-color: lighten($bg_sub, 5);
     box-shadow: 0 0 5px $box_shd_tint;
     overflow: hidden;
     border-radius: $brd_rad;
@@ -21,12 +21,12 @@
   .auth_heading {
     position: relative;
     text-align: center;
-    color: $acc_clr;
+    color: $spc_clr;
     font-size: $txt_size6;
     letter-spacing: 0.1rem;
     margin-bottom: 20px;
 
-    .home_btn {
+    .redirect_btn {
       @include position(absolute, right, top, 0px, 50%);
       background-color: $bg_main;
       padding: 5px 10px 0;
@@ -47,13 +47,13 @@
       }
 
       input {
-        border: 1px solid $box_shd;
+        border: 1.5px solid $box_shd;
         width: 100%;
         display: block;
         padding: 10px 20px;
         border-radius: $brd_rad_small;
-
         font-size: $txt_size3;
+        color: $txt_clr3;
 
         &:focus {
           border-color: $acc_clr;
@@ -73,7 +73,7 @@
       margin: 20px 0;
 
       font-size: $txt_size1;
-      color: $acc_clr;
+      color: $spc_clr;
 
       a {
         text-decoration: underline;

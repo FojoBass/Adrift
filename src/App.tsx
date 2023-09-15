@@ -8,6 +8,7 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import Home from './pages/Home';
+import About from './pages/About';
 import Error from './pages/Error';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -481,6 +482,7 @@ function App() {
     createRoutesFromElements(
       <Route path='/' element={<Root />} errorElement={<Error />}>
         <Route index element={<Home />} />
+        <Route path='/adrift' element={<About />} />
         <Route path='archives' element={<Articles />} />
         <Route path='dashboard' element={<Dashboard />}>
           <Route path='author/:id' element={<AuthorDashboard />} />

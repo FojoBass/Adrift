@@ -12,7 +12,7 @@ const Navbar = () => {
     <nav id='nav_sect'>
       <div className='center_sect'>
         <Link to='/' className='logo_btn'>
-          E<span>J</span>
+          AD<span>RI</span>FT
         </Link>
 
         <div className='nav_link_wrapper'>

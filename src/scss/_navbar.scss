@@ -10,17 +10,15 @@
 
     .logo_btn {
       display: block;
-      border: 2px solid $box_shd;
-      padding: 10px;
+      padding: 0;
       border-radius: $brd_rad;
       font-size: $txt_size_xlrg;
-
-      color: $bg_sub;
-      background-color: $box_shd;
+      font-family: $fnt_logo;
+      color: $acc_clr;
 
       span {
-        font-family: inherit;
         color: $spc_clr;
+        font-family: inherit;
       }
     }
 
@@ -36,7 +34,7 @@
       }
 
       &.active:not(&.login_btn.active, &.logout_btn.active) {
-        color: red;
+        color: $spc_clr;
         pointer-events: none;
       }
 

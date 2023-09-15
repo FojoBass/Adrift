@@ -6,7 +6,7 @@
       height: 350px;
       float: left;
       margin-right: 25px;
-      box-shadow: 5px 5px 5px $spc_clr;
+      box-shadow: 5px 5px 5px lighten($acc_clr, 30);
 
       img {
         height: 100%;

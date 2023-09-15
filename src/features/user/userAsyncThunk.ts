@@ -171,11 +171,22 @@ export const getAuthors = createAsyncThunk<UserInfoInt[], void>(
         allAuthors.push(doc.data() as UserInfoInt);
       });
 
-      
-
       return allAuthors;
     } catch (error) {
       return thunkApi.rejectWithValue(`Getting all authors ${error}`);
+    }
+  }
+);
+
+// *Forgot Password
+export const forgotPword = createAsyncThunk<void, { email: string }>(
+  'user/forgotPword',
+  async (payload, thunkApi) => {
+    const { email } = payload;
+    await eduJournServices.forgotPword(email);
+    try {
+    } catch (error) {
+      return thunkApi.rejectWithValue(`Forgot password ${error}`);
     }
   }
 );

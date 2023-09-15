@@ -1,6 +1,6 @@
 import React from 'react';
-import aboutUsImg from '../../assets/About.jpg';
-import aimsImg from '../../assets/Aims.jpg';
+import aboutUsImg from '../assets/About.jpg';
+import aimsImg from '../assets/Aims.jpg';
 import { Link } from 'react-router-dom';
 
 const About = () => {
@@ -107,7 +107,7 @@ const About = () => {
         </div>
       </div>
 
-      {/* <Link to='/our_team'>Meet our team</Link> */}
+      <Link to='/our_team'>Meet our team</Link>
     </section>
   );
 };

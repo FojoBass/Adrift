@@ -28,7 +28,6 @@ const Categories = () => {
     e.preventDefault();
     if (validateName(newCateg, categInputRef.current)) {
       const data = [...new Set([...categories, newCateg.toLocaleLowerCase()])];
-
       dispatch(updateCateg(data));
       setNewCateg('');
     }

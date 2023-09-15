@@ -5,7 +5,7 @@
   }
 
   .top {
-    background-color: $bg_sub;
+    background-color: lighten($bg_sub, 8);
     padding: 20px 0;
 
     .center_sect {
@@ -17,25 +17,14 @@
           @include flexDisplay(center, flex-start);
 
           .logo {
-            border: 2px solid $box_shd;
-            padding: 10px;
-            border-radius: $brd_rad;
-            font-size: $txt_size5;
-
-            color: $bg_sub;
-            background-color: $box_shd;
+            font-family: $fnt_logo;
+            font-size: $txt_size8;
+            color: $acc_clr;
 
             span {
               font-family: inherit;
               color: $spc_clr;
             }
-          }
-
-          .company_name {
-            margin-left: 10px;
-
-            font-size: $txt_size4;
-            color: $spc_clr;
           }
         }
 
@@ -66,7 +55,8 @@
         }
 
         .view_all_btn {
-          color: $spc_clr;
+          color: $acc_clr;
+          font-weight: bold;
 
           &:hover {
             text-decoration: underline;
@@ -105,16 +95,21 @@
   }
 
   .bottom {
-    background-color: #edf2f65d;
+    background-color: darken($bg_sub, 20);
+    color: $txt_clr2;
 
     .center_sect {
       text-align: center;
       padding: 20px 0;
 
-      font-size: $txt_size1;
+      font-size: $txt_size2;
 
       a {
-        color: $spc_clr;
+        color: inherit;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }

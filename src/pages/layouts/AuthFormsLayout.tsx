@@ -1,5 +1,5 @@
 import React from 'react';
-import { AiOutlineHome } from 'react-icons/ai';
+import { AiOutlineHome, AiOutlineArrowLeft } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/store';
 import { googleSignIn } from '../../features/user/userAsyncThunk';
@@ -13,6 +13,7 @@ interface AuthFormsLayoutPropInt {
   sectId: string;
   submitText: string;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  closeSect?: () => void;
 }
 
 const AuthFormsLayout: React.FC<AuthFormsLayoutPropInt> = ({
@@ -21,8 +22,9 @@ const AuthFormsLayout: React.FC<AuthFormsLayoutPropInt> = ({
   sectId,
   submitText,
   handleSubmit,
+  closeSect,
 }) => {
-  const { isSignupLoading, isLogInLoading } = useAppSelector(
+  const { isSignupLoading, isLogInLoading, isRequesting } = useAppSelector(
     (state) => state.user
   );
 
@@ -37,25 +39,37 @@ const AuthFormsLayout: React.FC<AuthFormsLayoutPropInt> = ({
       <div className='auth_sect_wrapper'>
         <h3 className='auth_heading'>
           {sectTitle}
-          <Link to='/' className='home_btn'>
-            <AiOutlineHome />
-          </Link>
+          {sectId === 'forgot' ? (
+            <button
+              className='redirect_btn'
+              type='button'
+              onClick={() => closeSect && closeSect()}
+            >
+              <AiOutlineArrowLeft />
+            </button>
+          ) : (
+            <Link to='/' className='redirect_btn'>
+              <AiOutlineHome />
+            </Link>
+          )}
         </h3>
 
         <form className='login_form auth_form' onSubmit={handleSubmit}>
           {children}
           <button
             className='auth_submit_btn'
-            disabled={isSignupLoading || isLogInLoading}
+            disabled={isSignupLoading || isLogInLoading || isRequesting}
             style={
-              isSignupLoading || isLogInLoading
+              isSignupLoading || isLogInLoading || isRequesting
                 ? { opacity: '0.5', cursor: 'not-allowed' }
                 : {}
             }
           >
-            {isSignupLoading || isLogInLoading
+            {isSignupLoading || isLogInLoading || isRequesting
               ? submitText === 'Signup'
                 ? 'Siging up...'
+                : submitText === 'Request'
+                ? 'Requesting...'
                 : 'Loging in...'
               : submitText}
           </button>

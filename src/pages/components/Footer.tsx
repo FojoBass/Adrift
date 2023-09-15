@@ -10,7 +10,7 @@ const Footer = () => {
   const [otherArticles, setOtherArticles] = useState<ArticleInfoInt[]>([]);
 
   useEffect(() => {
-    if (!otherArticles.length) {
+    if (!otherArticles.length && publishedArticles.length) {
       let modArticles: ArticleInfoInt[] = [];
       let randInds: number[] = [];
 
@@ -21,8 +21,8 @@ const Footer = () => {
         else randInds.push(randInd);
 
         modArticles.push(publishedArticles[randInd]);
-        setOtherArticles(modArticles);
       }
+      setOtherArticles(modArticles);
     }
   }, [publishedArticles, otherArticles]);
 
@@ -33,9 +33,8 @@ const Footer = () => {
           <article className='footer_opt_wrapper'>
             <div className='logo_wrapper'>
               <div className='logo'>
-                E<span>J</span>
+                ad<span>ri</span>ft
               </div>
-              <p className='company_name'>EduJourn</p>
             </div>
 
             <article className='footer_opt_part'>
@@ -119,7 +118,7 @@ const Footer = () => {
 
       <div className='bottom'>
         <div className='center_sect'>
-          copyright &copy; 2023 . <Link to='/'>EduJourn</Link>
+          copyright &copy; 2023 . <Link to='/'>adrift</Link>
         </div>
       </div>
     </footer>

@@ -18,7 +18,7 @@ const Hero = () => {
   const { publishedArticles } = useAppSelector((state) => state.article);
 
   useEffect(() => {
-    if (!heroInfo.length) {
+    if (!heroInfo.length && publishedArticles.length) {
       let modArticles: ArticleInfoInt[] | HeroInfoInt[] = [];
       let randInds: number[] = [];
 
@@ -50,7 +50,7 @@ const Hero = () => {
 
   return (
     <section id='hero_sect'>
-      {heroInfo.map((hero, index) => (
+      {/* {heroInfo.map((hero, index) => (
         <article
           className='post_wrapper'
           key={index}
@@ -78,7 +78,7 @@ const Hero = () => {
             onClick={() => setHeroIndex(index)}
           ></button>
         ))}
-      </div>
+      </div> */}
     </section>
   );
 };

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Hero from './components/Hero';
-import About from './components/About';
 import { topArticles } from '../data';
 import { Link } from 'react-router-dom';
 import { userSlice } from '../features/user/userSlice';
@@ -23,19 +22,17 @@ const Home = () => {
   const [otherArticles, setOtherArticles] = useState<ArticleInfoInt[]>([]);
 
   useEffect(() => {
-    if (!otherArticles.length) {
+    if (!otherArticles.length && publishedArticles.length) {
       let modArticles: ArticleInfoInt[] = [];
       let randInds: number[] = [];
 
-      if (publishedArticles.length) {
-        for (let i = 0; i < 12; i++) {
-          const randInd = Math.floor(Math.random() * publishedArticles.length);
+      for (let i = 0; i < 12; i++) {
+        const randInd = Math.floor(Math.random() * publishedArticles.length);
 
-          if (randInds.find((ind) => ind === randInd)) continue;
-          else randInds.push(randInd);
+        if (randInds.find((ind) => ind === randInd)) continue;
+        else randInds.push(randInd);
 
-          modArticles.push(publishedArticles[randInd]);
-        }
+        modArticles.push(publishedArticles[randInd]);
       }
       setOtherArticles(modArticles);
     }
@@ -90,7 +87,6 @@ const Home = () => {
           )}
         </div>
       </section>
-      <About />
     </section>
   );
 };
