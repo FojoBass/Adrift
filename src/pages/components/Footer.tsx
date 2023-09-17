@@ -53,7 +53,7 @@ const Footer = () => {
             </article>
           </article>
 
-          <article className='footer_opt_wrapper'>
+          <article className='footer_opt_wrapper some_arts'>
             <h3>Some Articles</h3>
 
             {otherArticles.map((article, index) => {
@@ -87,7 +87,7 @@ const Footer = () => {
             </Link>
           </article>
 
-          <article className='footer_opt_wrapper'>
+          <article className='footer_opt_wrapper quick_links'>
             <h3>Quick Links</h3>
 
             <article className='quick_links_wrapper'>

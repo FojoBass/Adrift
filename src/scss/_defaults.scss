@@ -6,7 +6,7 @@
 }
 
 :root {
-  font-size: 9px;
+  font-size: 8px;
 }
 
 button {
@@ -17,6 +17,11 @@ button {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  // tap-highlight-color: transparent;
 }
 
 body {

@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import aboutUsImg from '../assets/About.jpg';
 import aimsImg from '../assets/Aims.jpg';
 import { Link } from 'react-router-dom';
+import { useGlobalContext } from '../context';
 
 const About = () => {
+  const { setIsOpenSide } = useGlobalContext();
+
+  useEffect(() => {
+    setIsOpenSide && setIsOpenSide(false);
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <section id='about_sect' className='center_sect'>
       <h2 className='sect_heading'>About us</h2>

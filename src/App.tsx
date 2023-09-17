@@ -63,6 +63,7 @@ import {
   validateName,
   validateTitle,
 } from './helpers/formHandling';
+import SideNav from './pages/components/SideNav';
 
 // ! ADD A 'Scroll to Top' BUTTON. DO NOT FORGET
 
@@ -515,6 +516,7 @@ const Root: React.FC = () => {
       ) : (
         <>
           <Navbar />
+          <SideNav />
           <Verification />
           <Outlet />
           <ToastContainer />

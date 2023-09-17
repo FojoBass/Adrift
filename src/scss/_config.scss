@@ -19,18 +19,12 @@ $txt_size8: 2.8rem;
 $txt_size9: 3rem;
 $txt_size_xlrg: 4.5rem;
 $bg_main: #ffffff;
-// $bg_sub: #edf2f6;
 $bg_sub: #f7e9d1;
 $bg_over: #0021364f;
 $bg_sub2: #edf2f636;
-// $spc_clr: #d30015;
 $spc_clr: #337ab7;
-// $spc_clr: #d35400;
-// $spc_clr_tint: #d3001571;
 $spc_clr_tint: #337ab771;
-// $acc_clr: #337ab7;
 $acc_clr: #e67e22;
-// $box_shd: #808080;
 $box_shd: #8080804d;
 $box_shd_tint: #8080804d;
 $brd_rad: 10px;
@@ -38,7 +32,6 @@ $brd_rad_small: 5px;
 $brd_rad_big: 15px;
 $txt_clr1: #000;
 $txt_clr2: #fff;
-// $txt_clr3: #4e4e4e;
 $txt_clr3: #5d463f;
 
 // * Mixins
@@ -84,4 +77,10 @@ $txt_clr3: #5d463f;
   #{$x}: $x_val;
   #{$y}: $y_val;
   transform: translate($x_trans, $y_trans);
+}
+
+@mixin mediaQ($max_min, $width) {
+  @media screen and (#{$max_min}-width: $width) {
+    @content;
+  }
 }

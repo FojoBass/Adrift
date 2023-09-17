@@ -8,6 +8,12 @@
       margin-right: 25px;
       box-shadow: 5px 5px 5px lighten($acc_clr, 30);
 
+      @include mediaQ(max, 750px) {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+
       img {
         height: 100%;
       }
@@ -28,6 +34,10 @@
       grid-template-columns: 1.5fr 2fr;
       grid-gap: 20px;
       align-items: center;
+
+      @include mediaQ(max, 650px) {
+        grid-template-columns: 1fr;
+      }
 
       .main_info {
         p {
@@ -57,7 +67,7 @@
 
   .team_card_wrapper {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
     grid-gap: 20px;
     grid-auto-rows: 300px;
 

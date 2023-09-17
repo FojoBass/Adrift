@@ -1,5 +1,18 @@
 #archives_sect {
   padding-bottom: 40px;
+  position: relative;
+
+  .sect_heading {
+    position: relative;
+    .filter_btn {
+      display: none;
+
+      @include mediaQ(max, 750px) {
+        display: inline-block;
+        @include position(absolute, left, top, 20px, 50%);
+      }
+    }
+  }
 
   .center_sect {
     display: grid;
@@ -7,33 +20,76 @@
     grid-gap: 40px;
     align-items: start;
 
+    @include mediaQ(max, 750px) {
+      grid-template-columns: 1fr;
+    }
+
     .left_side {
       box-shadow: 0 0 10px $box_shd_tint;
       padding: 20px;
-      // position: sticky;
-      // top: 120px;
+      transition: all ease $fast_trans;
 
-      .search_form {
-        @include flexDisplay(stretch, flex-start);
-        input {
-          border: 2.5px solid $bg_sub;
-          border-right: none;
-          padding: 10px 15px;
-          width: 80%;
+      @include mediaQ(max, 750px) {
+        @include position(absolute, left, top, 0px, 0px);
+        width: 100%;
+        background-color: $bg_main;
+        transform: translateX(-100%);
+        overflow-y: auto;
+        height: 100vh;
+        backdrop-filter: blur(10px);
+        padding-bottom: 130px;
 
-          letter-spacing: 0.1rem;
+        &.show_filter {
+          transform: translateX(0);
+        }
+      }
 
-          &:focus {
-            border-color: $acc_clr;
+      .top_wrapper {
+        @include mediaQ(max, 750px) {
+          @include flexDisplay(center, space-between);
+        }
+
+        .search_form {
+          @include mediaQ(max, 750px) {
+            width: 80%;
+          }
+          @include flexDisplay(stretch, flex-start);
+          input {
+            border: 2.5px solid $bg_sub;
+            border-right: none;
+            padding: 10px 15px;
+            width: 80%;
+            letter-spacing: 0.1rem;
+
+            &:focus {
+              border-color: $acc_clr;
+            }
+          }
+
+          .search_btn {
+            background-color: $acc_clr;
+            display: block;
+            width: 15%;
+            color: $txt_clr2;
+            font-size: $txt_size3;
           }
         }
 
-        .search_btn {
-          background-color: $acc_clr;
-          display: block;
-          width: 15%;
-          color: $txt_clr2;
-          font-size: $txt_size3;
+        .close_filter_btn {
+          display: none;
+
+          @include mediaQ(max, 750px) {
+            display: inline-block;
+            color: #ff0000;
+            padding: 5px 5px 0px;
+            font-size: $txt_size9;
+            border: 1.5px solid #ff0000;
+
+            &:hover {
+              background-color: #ff0000;
+              color: $txt_clr2;
+            }
+          }
         }
       }
 

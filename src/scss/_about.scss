@@ -20,11 +20,15 @@
   .aims_wrapper {
     .img_wrapper {
       width: 40%;
-      height: 500px;
+      height: 450px;
       float: left;
       margin: 0 15px 15px 0;
 
-      img {
+      @include mediaQ(max, 850px) {
+        width: 100%;
+      }
+
+      @media img {
         height: 100%;
       }
     }

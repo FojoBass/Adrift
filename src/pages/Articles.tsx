@@ -1,16 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { BsSearch, BsPerson } from 'react-icons/bs';
+import { BsSearch, BsPerson, BsFilter } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { ArticleInfoInt } from '../types';
 import { useAppDispatch, useAppSelector } from '../app/store';
 import { toast } from 'react-toastify';
 import { useSearchParams } from 'react-router-dom';
+import { useGlobalContext } from '../context';
+import { FaTimes } from 'react-icons/fa';
 
 // TODO FOR SUBMIT, IF USER IS NOT SIGNED IN, SET lINK TO LOGIN PAGE
 
 const Articles = () => {
   const { publishedArticles, volCount, categories, currentIssue } =
     useAppSelector((state) => state.article);
+
+  const { setIsOpenSide } = useGlobalContext();
 
   const [searchValue, setSearchValue] = useState('');
   const [currentPageArticles, setCurrentPageArticles] = useState<
@@ -32,6 +36,8 @@ const Articles = () => {
   const [showCount, setShowCount] = useState({ start: 0, end: 0 });
 
   const applyBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  const [isOpenFilter, setIsOpenFilter] = useState<boolean>(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchDisplayArticles, setSearchDisplayArticles] = useState<
@@ -255,36 +261,56 @@ const Articles = () => {
   }, [currentPageNumber, sort, order, displayArticles]);
 
   useEffect(() => {
+    if (isOpenFilter) document.documentElement.style.overflowY = 'hidden';
+    else document.documentElement.style.overflowY = 'auto';
+  }, [isOpenFilter]);
+
+  useEffect(() => {
+    setIsOpenSide && setIsOpenSide(false);
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <section id='archives_sect'>
-      <h2 className='sect_heading'>Articles</h2>
+      <h2 className='sect_heading'>
+        <button className='filter_btn' onClick={() => setIsOpenFilter(true)}>
+          <BsFilter />
+        </button>
+        Articles
+      </h2>
 
       <div className='center_sect'>
-        <div className='left_side'>
-          <form className='search_form' onSubmit={(e) => e.preventDefault()}>
-            <input
-              type='text'
-              value={searchValue}
-              onChange={(e) => {
-                setSearchValue(e.target.value);
-                setSearchParams({
-                  s: e.target.value,
-                  fromYear,
-                  toYear,
-                  categ: categFilter.join('_'),
-                  vol: String(volsFilter),
-                  is: String(issuesFilter),
-                });
-              }}
-              placeholder='Search title, author, or co-author'
-            />
-            <button className='search_btn'>
-              <BsSearch />
+        <div className={`left_side ${isOpenFilter ? 'show_filter' : ''}`}>
+          <div className='top_wrapper'>
+            <form className='search_form' onSubmit={(e) => e.preventDefault()}>
+              <input
+                type='text'
+                value={searchValue}
+                onChange={(e) => {
+                  setSearchValue(e.target.value);
+                  setSearchParams({
+                    s: e.target.value,
+                    fromYear,
+                    toYear,
+                    categ: categFilter.join('_'),
+                    vol: String(volsFilter),
+                    is: String(issuesFilter),
+                  });
+                }}
+                placeholder='Search title, author, or co-author'
+              />
+              <button className='search_btn'>
+                <BsSearch />
+              </button>
+            </form>
+
+            <button
+              className='close_filter_btn'
+              onClick={() => setIsOpenFilter(false)}
+            >
+              <FaTimes />
             </button>
-          </form>
+          </div>
 
           <div className='filters_wrapper'>
             <article className='filter_wrapper'>

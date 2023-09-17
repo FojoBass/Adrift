@@ -47,11 +47,14 @@ const Login = () => {
   useEffect(() => {
     if (
       appError.includes('user-not-found') ||
-      appError.includes('wrong-password')
+      appError.includes('wrong-password') ||
+      appError.includes('invalid-login-credentials')
     )
       toast.error('Incorrect email or password');
     if (appError.includes('Account does not exist'))
       toast.error('Account does not exist');
+    if (appError.includes('network-request-failed'))
+      toast.error('Check network connection and try again');
 
     dispatch(resetAuthError(''));
   }, [appError]);

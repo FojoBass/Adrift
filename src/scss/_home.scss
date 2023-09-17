@@ -11,13 +11,31 @@
     grid-column-gap: 30px;
     margin-bottom: 30px;
 
+    @include mediaQ(max, 950px) {
+      grid-template-columns: 1fr;
+    }
+
     .top_article_wrapper {
+      &:last-of-type,
+      &:nth-of-type(7) {
+        border: none;
+      }
+
+      @include mediaQ(max, 950px) {
+        &:nth-of-type(7) {
+          border-bottom: 1px solid $box_shd_tint;
+        }
+        &:last-of-type {
+          border: none;
+        }
+      }
+
       border-bottom: 1px solid $box_shd_tint;
       padding-bottom: 20px;
       .title {
         color: $acc_clr;
         text-decoration: underline;
-        font-size: $txt_size5;
+        font-size: $txt_size4;
         line-height: 3.2rem;
         margin-bottom: 10px;
         display: block;

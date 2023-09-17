@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../app/store';
 import { toast } from 'react-toastify';
+import { useGlobalContext } from '../context';
 
 // TODO Ensure to review some of the info in the below texts
 
@@ -9,12 +10,15 @@ const SubmissionGuide = () => {
   const { userDetails, isLoggedIn } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
 
+  const { setIsOpenSide } = useGlobalContext();
+
   const handleSubmitClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     toast.info('Login as author to access page', { toastId: 'login_toast' });
     navigate('/login');
   };
 
   useEffect(() => {
+    setIsOpenSide && setIsOpenSide(false);
     window.scrollTo(0, 0);
   }, []);
 

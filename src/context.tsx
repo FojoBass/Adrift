@@ -86,6 +86,8 @@ interface ContextInt {
   >;
   isReload?: boolean;
   setIsReload?: React.Dispatch<React.SetStateAction<boolean>>;
+  isOpenSide?: boolean;
+  setIsOpenSide?: React.Dispatch<React.SetStateAction<boolean>>;
   setConfirmations?: React.Dispatch<
     React.SetStateAction<{
       isShow: boolean;
@@ -127,6 +129,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [authorsArticleId, setAuthorsArticleId] = useState('');
   const [editorsArticleId, setEditorsArticleId] = useState('');
   const [isAddTeam, setIsAddTeam] = useState(false);
+  const [isOpenSide, setIsOpenSide] = useState(false);
   const [isSettings, setIsSettings] = useState(false);
   const [disableVerBtn, setDisableVerBtn] = useState(false);
   const [verErrorMsg, setVerErrorMsg] = useState('');
@@ -260,6 +263,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     setAuthorsArticleId,
     isAuthors,
     setIsAuthors,
+    isOpenSide,
+    setIsOpenSide,
   };
 
   useEffect(() => {

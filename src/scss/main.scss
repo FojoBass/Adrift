@@ -15,6 +15,7 @@
 @import 'submit_guide';
 @import 'submit';
 @import 'verification';
+@import 'sidenav';
 
 .set_acct_sect {
   @include position(fixed, left, top, 0px, 0px);

@@ -71,7 +71,7 @@
         width: 70%;
         height: 70%;
         cursor: pointer;
-        background-color: $spc_clr;
+        background-color: #ff0000;
         opacity: 0;
         z-index: -1;
         @include transitionAll($vfast_trans);
@@ -91,7 +91,7 @@
     }
 
     &.rejected span {
-      background-color: $spc_clr;
+      background-color: #ff0000;
       color: $txt_clr2;
     }
 
@@ -133,7 +133,7 @@
   }
 
   button.hover:hover {
-    background-color: $acc_clr;
+    background-color: $box_shd;
     color: $txt_clr2;
   }
 

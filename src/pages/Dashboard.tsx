@@ -14,7 +14,7 @@ import {
 const Dashboard = () => {
   const { userDetails, isLoggedIn } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
-  const { affirm, setAffirm } = useGlobalContext();
+  const { affirm, setAffirm, setIsOpenSide } = useGlobalContext();
   const { allArticles, volCount } = useAppSelector((state) => state.article);
   const { setJustPublished, setIsPublishing } = articleSlice.actions;
   const dispatch = useAppDispatch();
@@ -43,6 +43,10 @@ const Dashboard = () => {
       setAffirm && setAffirm({ type: '', state: false });
     }
   }, [affirm, volCount]);
+
+  useEffect(() => {
+    setIsOpenSide && setIsOpenSide(false);
+  }, []);
 
   return (
     <>

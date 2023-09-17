@@ -12,7 +12,7 @@ import { timeConverter } from '../helpers/timeConverter';
 const Home = () => {
   const { setIsLoggedIn } = userSlice.actions;
   const dispatch = useAppDispatch();
-  const { justLoggedOut, setJustLoggedOut } = useGlobalContext();
+  const { justLoggedOut, setJustLoggedOut, setIsOpenSide } = useGlobalContext();
   const location = useLocation();
 
   // TODO Ensure to close off every loop hole in displaying published articles
@@ -40,6 +40,7 @@ const Home = () => {
 
   useEffect(() => {
     setOtherArticles([]);
+    setIsOpenSide && setIsOpenSide(false);
     window.scrollTo(0, 0);
   }, []);
 
