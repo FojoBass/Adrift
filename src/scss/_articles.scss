@@ -310,6 +310,10 @@
               .category {
                 margin-right: 50px;
                 text-transform: capitalize;
+
+                @include mediaQ(max, 750px) {
+                  margin-right: 5px;
+                }
               }
             }
 
@@ -320,6 +324,12 @@
               color: $txt_clr2;
               margin-top: 10px;
               border-radius: $brd_rad_small;
+
+              @include mediaQ(max, 750px) {
+                padding: 5px 10px;
+                font-size: $txt_size1;
+                margin-right: 5px;
+              }
             }
           }
         }
