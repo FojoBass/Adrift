@@ -56,6 +56,7 @@ const Articles = () => {
     setSearchParams({}, { replace: true });
     setCurrentPageNumber(1);
     setIsReset(true);
+    setIsOpenFilter(false);
   };
 
   const handleApply = (e: React.MouseEvent) => {
@@ -73,6 +74,7 @@ const Articles = () => {
 
     setDisplayArticles(handleFiltering());
     setCurrentPageNumber(1);
+    setIsOpenFilter(false);
   };
 
   const handleFiltering = (): ArticleInfoInt[] => {
@@ -299,7 +301,10 @@ const Articles = () => {
                 }}
                 placeholder='Search title, author, or co-author'
               />
-              <button className='search_btn'>
+              <button
+                className='search_btn'
+                onClick={() => setIsOpenFilter(false)}
+              >
                 <BsSearch />
               </button>
             </form>
@@ -328,7 +333,10 @@ const Articles = () => {
                     onChange={(e) => handleCategFilterChange(e, true)}
                   />
                   <label htmlFor='category_all'>
-                    All <span className='filter_opt_count'>(23)</span>
+                    All{' '}
+                    <span className='filter_opt_count'>
+                      ({displayArticles.length})
+                    </span>
                   </label>
                 </article>
 
@@ -350,7 +358,16 @@ const Articles = () => {
                       htmlFor={categ}
                       style={{ textTransform: 'capitalize' }}
                     >
-                      {categ} <span className='filter_opt_count'>(12)</span>
+                      {categ}{' '}
+                      <span className='filter_opt_count'>
+                        (
+                        {
+                          displayArticles.filter(
+                            (art) => art.category === categ
+                          ).length
+                        }
+                        )
+                      </span>
                     </label>
                   </article>
                 ))}
@@ -375,7 +392,15 @@ const Articles = () => {
                       htmlFor={ind.toString()}
                       style={{ textTransform: 'capitalize' }}
                     >
-                      {ind + 1} <span className='filter_opt_count'>(12)</span>
+                      {ind + 1}{' '}
+                      <span className='filter_opt_count'>
+                        (
+                        {
+                          displayArticles.filter((art) => art.vol === ind + 1)
+                            .length
+                        }
+                        )
+                      </span>
                     </label>
                   </article>
                 ))}
@@ -399,7 +424,10 @@ const Articles = () => {
                     htmlFor={(0 + 123).toString()}
                     style={{ textTransform: 'capitalize' }}
                   >
-                    All <span className='filter_opt_count'>(12)</span>
+                    All{' '}
+                    <span className='filter_opt_count'>
+                      ({displayArticles.length})
+                    </span>
                   </label>
                 </article>
                 {new Array(4).fill('t').map((issue, ind) => (
@@ -416,7 +444,15 @@ const Articles = () => {
                       htmlFor={(ind + 123).toString()}
                       style={{ textTransform: 'capitalize' }}
                     >
-                      {ind + 1} <span className='filter_opt_count'>(12)</span>
+                      {ind + 1}{' '}
+                      <span className='filter_opt_count'>
+                        ({' '}
+                        {
+                          displayArticles.filter((art) => art.issue === ind + 1)
+                            .length
+                        }
+                        )
+                      </span>
                     </label>
                   </article>
                 ))}

@@ -1,5 +1,5 @@
 #single_article_sect {
-  padding: 0 0 30px;
+  padding: 0 15px 30px;
 
   .icon {
     position: relative;
@@ -17,16 +17,6 @@
         background-color: darken($spc_clr, 10);
       }
     }
-
-    // .print_btn {
-    //   background-color: $acc_clr;
-    //   color: $txt_clr2 !important;
-    //   padding: 5px;
-
-    //   &:hover {
-    //     background-color: darken($acc_clr, 10);
-    //   }
-    // }
   }
 
   .action_btns {
@@ -36,14 +26,6 @@
       .icon {
         margin-right: 8px;
       }
-
-      // &.print_btn {
-      //   margin-right: 20px;
-      //   color: $acc_clr;
-      //   &:hover {
-      //     color: darken($acc_clr, 10);
-      //   }
-      // }
 
       &.download_btn {
         margin-right: 20px;
@@ -64,6 +46,10 @@
     grid-template-columns: 4fr 1fr;
     grid-gap: 30px;
     align-items: flex-start;
+
+    @include mediaQ(max, 950px) {
+      grid-template-columns: 1fr;
+    }
 
     .main_side {
       .img_wrapper {
@@ -99,6 +85,11 @@
             width: 95%;
             line-height: 3.5rem;
             margin-bottom: 10px;
+
+            @include mediaQ(max, 550px) {
+              font-size: $txt_size7;
+              line-height: 3rem;
+            }
           }
 
           .category_wrapper {
@@ -156,6 +147,10 @@
           color: $txt_clr3;
           font-size: $txt_size6;
           letter-spacing: 0.1rem;
+
+          @include mediaQ(max, 550px) {
+            font-size: $txt_size5;
+          }
         }
 
         .text_wrapper {
@@ -164,35 +159,20 @@
             line-height: 3rem;
             letter-spacing: 0.1rem;
             margin-bottom: 12px;
+            @include mediaQ(max, 550px) {
+              font-size: $txt_size2;
+            }
           }
-        }
-
-        .view_full_btn {
-          display: block;
-          margin: 30px 0 20px;
-          color: $spc_clr;
-          border: 1px solid $spc_clr;
-          padding: 5px 10px;
-          border-radius: $brd_rad_small;
-
-          &:hover {
-            background-color: $spc_clr;
-            color: $txt_clr2;
-          }
-        }
-
-        .full_article_win {
-          width: 100%;
-          height: 80vh;
-          border: none;
-          border: 1px solid $box_shd;
-          margin-bottom: 20px;
         }
       }
     }
 
     .side_bar {
       @include position(sticky, right, top, 0px, 120px);
+
+      @include mediaQ(max, 950px) {
+        display: none;
+      }
 
       .sect_heading {
         background-color: $bg_sub;

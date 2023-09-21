@@ -7,6 +7,7 @@
   overflow-y: auto;
   display: flex;
   padding-block: 20px;
+  padding-inline: 15px;
 
   &_wrapper {
     width: 500px;
@@ -26,11 +27,15 @@
     letter-spacing: 0.1rem;
     margin-bottom: 20px;
 
+    @include mediaQ(max, 500px) {
+      font-size: $txt_size4;
+    }
+
     .redirect_btn {
       @include position(absolute, right, top, 0px, 50%);
       background-color: $bg_main;
       padding: 5px 10px 0;
-      border-radius: $brd_rad;
+      border-radius: $brd_rad_small;
     }
   }
 
@@ -55,6 +60,10 @@
         font-size: $txt_size3;
         color: $txt_clr3;
 
+        @include mediaQ(max, 500px) {
+          font-size: $txt_size1;
+        }
+
         &:focus {
           border-color: $acc_clr;
         }
@@ -64,6 +73,10 @@
         @include position(absolute, right, top, 10px, 50%);
         padding: 5px;
         font-size: $txt_size2;
+
+        @include mediaQ(max, 500px) {
+          font-size: $txt_size0;
+        }
       }
     }
 
@@ -74,6 +87,10 @@
 
       font-size: $txt_size1;
       color: $spc_clr;
+
+      @include mediaQ(max, 500px) {
+        font-size: $txt_size0;
+      }
 
       a {
         text-decoration: underline;
@@ -87,6 +104,12 @@
       color: $txt_clr2;
       border-radius: $brd_rad_small;
       letter-spacing: 0.1rem;
+
+      @include mediaQ(max, 500px) {
+        font-size: $txt_size2;
+        padding: 5px 15px;
+        border-radius: $brd_rad_small;
+      }
     }
   }
 
@@ -98,6 +121,9 @@
     color: $txt_clr3;
     position: relative;
     z-index: 1;
+    @include mediaQ(max, 500px) {
+      font-size: $txt_size0;
+    }
 
     &:after {
       content: '';
@@ -127,6 +153,12 @@
     font-size: $txt_size3;
     box-shadow: 0 0 8px $box_shd;
 
+    @include mediaQ(max, 500px) {
+      font-size: $txt_size2;
+      padding: 5px 15px;
+      border-radius: $brd_rad_small;
+    }
+
     &:hover {
       color: $spc_clr;
     }
@@ -143,5 +175,10 @@
     padding: 10px 20px;
     border-radius: $brd_rad_small;
     font-size: $txt_size2;
+
+    @include mediaQ(max, 500px) {
+      font-size: $txt_size1;
+      padding: 5px 10px;
+    }
   }
 }

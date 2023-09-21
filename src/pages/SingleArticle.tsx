@@ -17,8 +17,6 @@ import { articleSlice } from '../features/article/articleSlice';
 import { EduJournServices } from '../services/EduJournServices';
 import { timeConverter } from '../helpers/timeConverter';
 
-// TODO SET UP VER URLS FOR PUBLISHE ARTICLES
-
 const SingleArticle = () => {
   const { publishedArticles } = useAppSelector((state) => state.article);
   const dispatch = useAppDispatch();
@@ -131,18 +129,19 @@ const SingleArticle = () => {
                         </span>
                         <span className='name'>{currentArticle.author}</span>
                       </div>
-                      {currentArticle.coAuthors.length &&
-                        currentArticle.coAuthors[0] && (
-                          <div className='co_authors'>
-                            <span className='heading'>Co-authors:</span>
+                      {currentArticle.coAuthors.length
+                        ? currentArticle.coAuthors[0] && (
+                            <div className='co_authors'>
+                              <span className='heading'>Co-authors:</span>
 
-                            {currentArticle.coAuthors.map((auth, ind) => (
-                              <span className='co_name' key={ind}>
-                                {auth}
-                              </span>
-                            ))}
-                          </div>
-                        )}
+                              {currentArticle.coAuthors.map((auth, ind) => (
+                                <span className='co_name' key={ind}>
+                                  {auth}
+                                </span>
+                              ))}
+                            </div>
+                          )
+                        : ''}
                     </div>
                     <p className='category_wrapper'>
                       <span className='category'>

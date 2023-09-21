@@ -21,7 +21,6 @@ button {
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  // tap-highlight-color: transparent;
 }
 
 body {
@@ -71,6 +70,10 @@ img {
   color: $txt_clr3;
   letter-spacing: 0.1rem;
   text-transform: capitalize;
+
+  @include mediaQ(max, 500px) {
+    font-size: $txt_size7;
+  }
 }
 
 #loading_sect {

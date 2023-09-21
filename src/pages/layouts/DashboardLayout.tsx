@@ -6,6 +6,8 @@ import {
   BsGear,
   BsHddStack,
   BsPeople,
+  BsFillArrowRightSquareFill,
+  BsFillArrowLeftSquareFill,
 } from 'react-icons/bs';
 import { HiOutlineClipboardDocumentList } from 'react-icons/hi2';
 import { FiLogOut } from 'react-icons/fi';
@@ -47,22 +49,13 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
     allArticles,
     justPublished,
     isPublishing,
-    authorArticles,
-    reviewerArticles,
     currentIssue,
     isPublishingFailed,
   } = useAppSelector((state) => state.article);
 
   const { setJustPublished, setIsPublishingFailed } = articleSlice.actions;
-  // const [roleArticles] = useState(
-  //   role === 'author'
-  //     ? authorArticles
-  //     : role === 'reviewer'
-  //     ? reviewerArticles
-  //     : role === 'editor'
-  //     ? editorArticles
-  //     : allArticles
-  // );
+
+  const [isDashMenuOpen, setIsDashMenuOpen] = useState(false);
 
   const [dummyPageArr, setDummyPageArr] = useState<''[]>([]);
 
@@ -192,11 +185,28 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
     }
   }, [grandModArticles, dashArticlesPerPage, dashStatusFilter, pageSect]);
 
+  //todo MAKE THE SIDEBAR MOVE TOGETHER WITH SCROLL, SO THAT IT WILL ALWAYS BE FIXED ON THE SCREEN
+  // todo ALSO, ENSURE TO MAKE ALL OVERLAYS RESPONSIVE
+
   return (
     <section id='dashboard_sect'>
-      <h3 className='sect_heading'>{role} dashboard</h3>
+      <h3 className='sect_heading'>
+        <button
+          className='dash_menu_btn'
+          onClick={() => setIsDashMenuOpen(!isDashMenuOpen)}
+        >
+          {isDashMenuOpen ? (
+            <BsFillArrowLeftSquareFill />
+          ) : (
+            <BsFillArrowRightSquareFill />
+          )}
+        </button>
+        {role} dashboard
+      </h3>
       <div className='center_sect'>
-        <nav className='nav_side dashboard_sides'>
+        <nav
+          className={`nav_side dashboard_sides ${isDashMenuOpen ? 'show' : ''}`}
+        >
           <div className='top_side'>
             <h3 className='user_name'>{name}</h3>
             <p className='affil'>{affiliation}</p>
