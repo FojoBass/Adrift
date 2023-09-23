@@ -80,30 +80,62 @@ img {
   display: flex;
   background-color: $bg_sub;
   height: 100vh;
+  animation: loadingAnim 10s linear 0s infinite;
 
   .center_sect {
     margin: auto;
     @include flexDisplay(center, center);
+    position: relative;
+    width: 150px;
 
-    .box {
-      margin: 0 5px;
-      padding: 10px;
-      border-radius: 50%;
-      box-shadow: 0 0 5px $box_shd_tint;
+    .logo {
+      font-family: $fnt_logo;
+      font-size: 20rem;
+      color: $acc_clr;
+    }
 
-      &.red_box {
-        background-color: $spc_clr;
-        animation: loadingAnim 2s linear 0s infinite;
-      }
+    .span_wrapper {
+      @include position(absolute, left, top, 50%, 60%);
+      width: 100%;
+      height: 150px;
 
-      &.white_box {
-        background-color: $bg_main;
-        animation: loadingAnim 2s linear 0.3s infinite;
-      }
+      span {
+        position: absolute;
+        width: 15px;
+        height: 15px;
 
-      &.blue_box {
-        background-color: $acc_clr;
-        animation: loadingAnim 2s linear 0.5s infinite;
+        &.box1 {
+          top: 0;
+          left: 0;
+          background-color: $spc_clr;
+          border-radius: 50%;
+          animation: genBoxAnim 1.5s linear 0s infinite,
+            boxAnim1 3.5s linear 0s infinite;
+        }
+        &.box2 {
+          top: 0;
+          left: 100%;
+          background-color: $acc_clr;
+          border-radius: 10px 0px;
+          animation: genBoxAnim 1.5s linear 0s infinite,
+            boxAnim2 4.5s linear 100ms infinite;
+        }
+        &.box3 {
+          top: 100%;
+          left: 0;
+          background-color: $txt_clr1;
+          border-radius: 2px 5px 2px 5px;
+          animation: genBoxAnim 1.5s linear 0s infinite,
+            boxAnim3 4.5s linear 50ms infinite;
+        }
+        &.box4 {
+          top: 100%;
+          left: 100%;
+          background-color: #ff0000;
+          border-radius: 5px/50%;
+          animation: genBoxAnim 1.5s linear 0s infinite,
+            boxAnim4 5s linear 80ms infinite;
+        }
       }
     }
   }
@@ -172,22 +204,121 @@ img {
 
 @keyframes loadingAnim {
   0% {
-    opacity: 1;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    filter: hue-rotate(180deg);
+  }
+  100% {
+    filter: hue-rotate(0deg);
+  }
+}
+
+@keyframes genBoxAnim {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes boxAnim1 {
+  0% {
+    left: 100%;
+    top: 0;
   }
 
   25% {
-    opacity: 0;
+    left: 100%;
+    top: 100%;
   }
 
   50% {
-    opacity: 1;
+    left: 0;
+    top: 100%;
   }
-
   75% {
-    opacity: 0;
+    left: 0;
+    top: 0;
+  }
+  100% {
+    left: 100%;
+    top: 0;
+  }
+}
+
+@keyframes boxAnim2 {
+  0% {
+    left: 0;
+    top: 100%;
   }
 
+  25% {
+    left: 0;
+    top: 0;
+  }
+
+  50% {
+    left: 100%;
+    top: 0;
+  }
+  75% {
+    left: 100%;
+    top: 100%;
+  }
   100% {
-    opacity: 1;
+    left: 0;
+    top: 100%;
+  }
+}
+
+@keyframes boxAnim3 {
+  0% {
+    left: 100%;
+    top: 100%;
+  }
+
+  25% {
+    left: 0;
+    top: 100%;
+  }
+
+  50% {
+    left: 0;
+    top: 0;
+  }
+  75% {
+    left: 100%;
+    top: 0;
+  }
+  100% {
+    left: 100%;
+    top: 100%;
+  }
+}
+
+@keyframes boxAnim4 {
+  0% {
+    left: 0;
+    top: 0;
+  }
+
+  25% {
+    left: 100%;
+    top: 0;
+  }
+
+  50% {
+    left: 100%;
+    top: 100%;
+  }
+  75% {
+    left: 0;
+    top: 100%;
+  }
+  100% {
+    left: 0;
+    top: 0;
   }
 }

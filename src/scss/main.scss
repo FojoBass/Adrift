@@ -67,3 +67,42 @@
     }
   }
 }
+
+#error_sect {
+  display: flex;
+  min-height: 100vh;
+  background-color: $bg_sub2;
+
+  .error_wrapper {
+    margin: auto;
+    text-align: center;
+    color: $txt_clr3;
+
+    h1 {
+      font-size: 20rem;
+      letter-spacing: 2rem;
+
+      span:nth-child(even) {
+        color: $spc_clr;
+      }
+
+      span:nth-child(odd) {
+        color: $acc_clr;
+      }
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .home_btn {
+      text-decoration: underline;
+      color: $acc_clr;
+      font-size: $txt_size4;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}

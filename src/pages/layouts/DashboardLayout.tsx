@@ -59,6 +59,9 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
 
   const [dummyPageArr, setDummyPageArr] = useState<''[]>([]);
 
+  const centerRef = useRef<HTMLDivElement | null>(null);
+  const dashNavRef = useRef<HTMLDivElement | null>(null);
+
   const {
     commentArticleId,
     statusArticleId,
@@ -93,6 +96,10 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const [isSmallWin, setIsSmallWin] = useState(false);
+
+  const [isTimer, setIsTimer] = useState(true);
 
   const gridStyleRef = useRef({
     gridTemplateColumns: `${
@@ -185,6 +192,76 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
     }
   }, [grandModArticles, dashArticlesPerPage, dashStatusFilter, pageSect]);
 
+  useEffect(() => {
+    if (window.innerWidth <= 1270 && !isSmallWin) setIsSmallWin(true);
+    window.onresize = () => {
+      if (window.innerWidth <= 1270 && !isSmallWin) setIsSmallWin(true);
+      if (window.innerWidth > 1270 && isSmallWin) setIsSmallWin(false);
+    };
+
+    return () => window.removeEventListener('resize', () => {});
+  }, [isSmallWin]);
+
+  // todo Comment all translation styles in the scss
+  // todo Control translation from useEffect
+
+  useEffect(() => {
+    if (centerRef.current && dashNavRef.current) {
+      const centerEl = centerRef.current;
+      const dashNavEl = dashNavRef.current;
+      const dashNavWidth = dashNavEl.getBoundingClientRect().width;
+      const dashInitialTrans = window
+        .getComputedStyle(dashNavEl)
+        .transform.split(',')[4]
+        ? Number(window.getComputedStyle(dashNavEl).transform.split(',')[4]) -
+          centerEl.scrollLeft
+        : 0;
+      const offSet = dashNavWidth + 20;
+
+      if (isSmallWin) {
+        dashNavEl.style.transition = 'none';
+
+        if (isDashMenuOpen) {
+          dashNavEl.style.transform = `translateX(${
+            dashInitialTrans + offSet + centerEl.scrollLeft
+          }px)`;
+        } else {
+          dashNavEl.style.transform = `translateX(${
+            dashInitialTrans - offSet + centerEl.scrollLeft
+          }px)`;
+        }
+
+        dashNavEl.style.transition = 'all ease 0.3s';
+
+        centerEl.onscroll = () => {
+          const remAddeddSize = isDashMenuOpen
+            ? dashInitialTrans + offSet
+            : dashInitialTrans - offSet;
+
+          dashNavEl.style.transition = 'none';
+
+          dashNavEl.style.transform = `translateX(${
+            remAddeddSize + centerEl.scrollLeft
+          }px)`;
+        };
+
+        dashNavEl.style.transition = 'all ease 0.3s';
+      } else {
+        dashNavEl.style.transform = `translateX(${
+          Number(dashInitialTrans) + centerEl.scrollLeft
+        }px)`;
+      }
+    }
+  }, [isSmallWin, centerRef, dashNavRef, isDashMenuOpen]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsTimer(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   //todo MAKE THE SIDEBAR MOVE TOGETHER WITH SCROLL, SO THAT IT WILL ALWAYS BE FIXED ON THE SCREEN
   // todo ALSO, ENSURE TO MAKE ALL OVERLAYS RESPONSIVE
 
@@ -203,9 +280,15 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
         </button>
         {role} dashboard
       </h3>
-      <div className='center_sect'>
+      <div className='center_sect' ref={centerRef}>
         <nav
-          className={`nav_side dashboard_sides ${isDashMenuOpen ? 'show' : ''}`}
+          className={`nav_side dashboard_sides`}
+          ref={dashNavRef}
+          style={
+            isTimer
+              ? { opacity: 0 }
+              : { transition: 'all ease 0.3s', opacity: 1 }
+          }
         >
           <div className='top_side'>
             <h3 className='user_name'>{name}</h3>

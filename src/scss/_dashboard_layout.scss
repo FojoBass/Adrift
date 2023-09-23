@@ -8,7 +8,7 @@
       display: none;
       @include position(absolute, left, top, 20px, 50%);
 
-      @include mediaQ(max, 1250px) {
+      @include mediaQ(max, 1270px) {
         display: inline-block;
       }
     }
@@ -26,7 +26,7 @@
       overflow-x: auto;
     }
 
-    @include mediaQ(max, 1250px) {
+    @include mediaQ(max, 1270px) {
       grid-template-columns: 1fr;
     }
 
@@ -37,18 +37,15 @@
     }
 
     .nav_side {
-      @include mediaQ(max, 1250px) {
-        @include position(absolute, left, top, 20px, 0px);
+      @include mediaQ(max, 1270px) {
+        position: absolute;
+        top: 0px;
+        left: 20px;
         width: fit-content;
         height: fit-content;
         background-color: $bg_main;
-        transform: translateX(-120%);
-        transition: all ease $fmid_trans;
+        // transition: all ease $fmid_trans;
         z-index: 9;
-
-        &.show {
-          transform: translateX(0);
-        }
       }
 
       .top_side {

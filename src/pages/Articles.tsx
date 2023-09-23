@@ -522,7 +522,9 @@ const Articles = () => {
                 onChange={(e) => setCurrentPageNumber(Number(e.target.value))}
               >
                 {pageArray.map((page, index) => (
-                  <option value={`${index + 1}`}>Page {index + 1}</option>
+                  <option value={`${index + 1}`} key={index}>
+                    Page {index + 1}
+                  </option>
                 ))}
               </select>
             </div>

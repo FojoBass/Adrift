@@ -4,9 +4,13 @@ const Loading = () => {
   return (
     <section id='loading_sect'>
       <div className='center_sect'>
-        <div className='red_box box'></div>
-        <div className='white_box box'></div>
-        <div className='blue_box box'></div>
+        <p className='logo'>a</p>
+        <div className='span_wrapper'>
+          <span className='box1'></span>
+          <span className='box2'></span>
+          <span className='box3'></span>
+          <span className='box4'></span>
+        </div>
       </div>
     </section>
   );
