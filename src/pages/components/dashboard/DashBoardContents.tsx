@@ -325,9 +325,9 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
     if (article.comments) {
       switch (userDetails.role) {
         case 'author':
-          if (article.comments?.author.length) {
+          if (article.comments?.author?.length) {
             let isNew: boolean = false;
-            for (let i = article.comments.author.length - 1; i >= 0; i--) {
+            for (let i = article.comments.author?.length - 1; i >= 0; i--) {
               if (
                 !article.comments.author[i].readers.find(
                   (reader) => reader === userDetails.id
@@ -335,7 +335,7 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
               ) {
                 isNew = true;
                 break;
-              } else if (i === article.comments.author.length - 1) break;
+              } else if (i === article.comments.author?.length - 1) break;
             }
 
             setIsNewComments(isNew);
@@ -343,10 +343,10 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
           break;
 
         case 'reviewer':
-          if (article.comments?.reviewers.length) {
+          if (article.comments?.reviewers?.length) {
             let isNew: boolean = false;
 
-            for (let i = article.comments.reviewers.length - 1; i >= 0; i--) {
+            for (let i = article.comments.reviewers?.length - 1; i >= 0; i--) {
               if (
                 !article.comments.reviewers[i].readers.find(
                   (reader) => reader === userDetails.id
@@ -354,7 +354,7 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
               ) {
                 isNew = true;
                 break;
-              } else if (i === article.comments.reviewers.length - 1) break;
+              } else if (i === article.comments.reviewers?.length - 1) break;
             }
 
             setIsNewComments(isNew);
@@ -364,8 +364,8 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
         case 'editor':
         case 'admin':
           let isNew: boolean = false;
-          if (article.comments?.author.length) {
-            for (let i = article.comments.author.length - 1; i >= 0; i--) {
+          if (article.comments?.author?.length) {
+            for (let i = article.comments.author?.length - 1; i >= 0; i--) {
               if (
                 !article.comments.author[i].readers.find(
                   (reader) => reader === userDetails.id
@@ -373,12 +373,12 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
               ) {
                 isNew = true;
                 break;
-              } else if (i === article.comments.author.length - 1) break;
+              } else if (i === article.comments.author?.length - 1) break;
             }
           }
 
-          if (article.comments?.reviewers.length && !isNew) {
-            for (let i = article.comments.reviewers.length - 1; i >= 0; i--) {
+          if (article.comments?.reviewers?.length && !isNew) {
+            for (let i = article.comments.reviewers?.length - 1; i >= 0; i--) {
               if (
                 !article.comments.reviewers[i].readers.find(
                   (reader) => reader === userDetails.id
@@ -386,12 +386,12 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
               ) {
                 isNew = true;
                 break;
-              } else if (i === article.comments.reviewers.length - 1) break;
+              } else if (i === article.comments.reviewers?.length - 1) break;
             }
           }
 
-          if (article.comments?.reviewers.length && !isNew) {
-            for (let i = article.comments.reviewers.length - 1; i >= 0; i--) {
+          if (article.comments?.reviewers?.length && !isNew) {
+            for (let i = article.comments.reviewers?.length - 1; i >= 0; i--) {
               if (
                 !article.comments.reviewers[i].readers.find(
                   (reader) => reader === userDetails.id
@@ -399,7 +399,7 @@ const DashBoardContents: React.FC<DashBoardContentsInt> = ({ article }) => {
               ) {
                 isNew = true;
                 break;
-              } else if (i === article.comments.editors.length - 1) break;
+              } else if (i === article.comments.editors?.length - 1) break;
             }
           }
           setIsNewComments(isNew);
