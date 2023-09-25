@@ -88,6 +88,8 @@ interface ContextInt {
   setIsReload?: React.Dispatch<React.SetStateAction<boolean>>;
   isOpenSide?: boolean;
   setIsOpenSide?: React.Dispatch<React.SetStateAction<boolean>>;
+  isDemo?: boolean;
+  setIsDemo?: React.Dispatch<React.SetStateAction<boolean>>;
   setConfirmations?: React.Dispatch<
     React.SetStateAction<{
       isShow: boolean;
@@ -144,8 +146,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [pageSect, setPageSect] = useState<PageSectEnum>(PageSectEnum.all);
   const eduJournServices = new EduJournServices();
 
+  const [isDemo, setIsDemo] = useState(
+    sessionStorage.getItem('adrift') ? true : false
+  );
+
   const [selectedStatus, setSelecetedStatus] = useState('pending');
-  const { userAppLoading } = useAppSelector((state) => state.user);
+  const { userAppLoading, isLoggedIn } = useAppSelector((state) => state.user);
   const { articleAppLoading } = useAppSelector((state) => state.article);
 
   const [recentDate, setRecentDate] = useState(new Date());
@@ -265,11 +271,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsAuthors,
     isOpenSide,
     setIsOpenSide,
+    isDemo,
+    setIsDemo,
   };
 
   useEffect(() => {
     setSuperAppLoading(userAppLoading || articleAppLoading);
   }, [userAppLoading, articleAppLoading]);
+
+  useEffect(() => {
+    if (isLoggedIn) sessionStorage.setItem('adrift', `${isDemo}`);
+  }, [isDemo, isLoggedIn]);
 
   return (
     <AppContext.Provider value={sharedProps}>{children}</AppContext.Provider>

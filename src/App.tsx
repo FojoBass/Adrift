@@ -64,6 +64,7 @@ import {
   validateTitle,
 } from './helpers/formHandling';
 import SideNav from './pages/components/SideNav';
+import Demo from './pages/components/Demo';
 
 // ! ADD A 'Scroll to Top' BUTTON. DO NOT FORGET
 
@@ -507,8 +508,26 @@ function App() {
 export default App;
 
 const Root: React.FC = () => {
-  const { superAppLoading, confirmations } = useGlobalContext();
+  const { superAppLoading, confirmations, isDemo } = useGlobalContext();
   const { setupAcct } = useAppSelector((state) => state.user);
+
+  const [isDemoMsg, setIsDemoMsg] = useState(false);
+
+  useEffect(() => {
+    setIsDemoMsg(isDemo ?? false);
+  }, [isDemo]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isDemoMsg) {
+      timer = setTimeout(() => {
+        setIsDemoMsg(false);
+      }, 8000);
+    }
+
+    return () => clearTimeout(timer);
+  }, [isDemoMsg]);
+
   return (
     <>
       {superAppLoading ? (
@@ -517,6 +536,7 @@ const Root: React.FC = () => {
         <>
           <Navbar />
           <SideNav />
+          {isDemoMsg && <Demo />}
           <Verification />
           <Outlet />
           <ToastContainer />

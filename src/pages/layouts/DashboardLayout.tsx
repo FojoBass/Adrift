@@ -77,6 +77,7 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
     setIsSettings,
     verErrorMsg,
     logOut,
+    setIsDemo,
     isLoggingOut,
     justLoggedOut,
     isReload,
@@ -285,7 +286,7 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
           className={`nav_side dashboard_sides`}
           ref={dashNavRef}
           style={
-            isTimer
+            isSmallWin && isTimer
               ? { opacity: 0 }
               : { transition: 'all ease 0.3s', opacity: 1 }
           }
@@ -355,7 +356,10 @@ const DashboardLayout: React.FC<DashboardLayoutPropInt> = ({
 
             <button
               className='nav_opt'
-              onClick={() => logOut && logOut()}
+              onClick={() => {
+                logOut && logOut();
+                setIsDemo && setIsDemo(false);
+              }}
               style={
                 isLoggingOut ? { opacity: '0.5', cursor: 'not-allowed' } : {}
               }

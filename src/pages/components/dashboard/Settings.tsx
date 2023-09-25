@@ -13,6 +13,7 @@ import {
 import { userSlice } from '../../../features/user/userSlice';
 import { toast } from 'react-toastify';
 import { validateConPassword } from '../../../helpers/formHandling';
+import { useGlobalContext } from '../../../context';
 
 const Settings = () => {
   const {
@@ -31,6 +32,8 @@ const Settings = () => {
     resetJustUpdatePassword,
   } = userSlice.actions;
   const dispatch = useAppDispatch();
+
+  const { isDemo } = useGlobalContext();
 
   const [name, setName] = useState(userDetails.name);
   const [title, setTitle] = useState(userDetails.title);
@@ -172,6 +175,7 @@ const Settings = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               ref={passwordInputRef}
+              disabled={isDemo ?? false}
             />
             <button
               className='pword_visible_toggle'
@@ -189,6 +193,7 @@ const Settings = () => {
               onChange={(e) => setConPassword(e.target.value)}
               type={showConPassword ? 'text' : 'password'}
               ref={conPasswordInputRef}
+              disabled={isDemo ?? false}
             />
             <button
               className='pword_visible_toggle'

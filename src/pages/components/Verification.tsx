@@ -15,6 +15,7 @@ const Verification = () => {
     logOut,
     isLoggingOut,
     justLoggedOut,
+    setIsDemo,
   } = useGlobalContext();
   const { currentUser } = auth;
 
@@ -71,7 +72,10 @@ const Verification = () => {
           </button>
           <button
             className='logout_btn'
-            onClick={() => logOut && logOut()}
+            onClick={() => {
+              logOut && logOut();
+              setIsDemo && setIsDemo(false);
+            }}
             style={
               isLoggingOut ? { opacity: '0.5', cursor: 'not-allowed' } : {}
             }

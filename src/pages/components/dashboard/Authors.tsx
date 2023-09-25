@@ -5,7 +5,7 @@ import { ArticleInfoInt } from '../../../types';
 import { useAppSelector } from '../../../app/store';
 
 const Authors = () => {
-  const { authorsArticleId } = useGlobalContext();
+  const { authorsArticleId, isDemo } = useGlobalContext();
   const [currentArticle, setCurrentArticle] = useState<ArticleInfoInt | null>(
     null
   );
@@ -33,7 +33,8 @@ const Authors = () => {
           <div className='main_auth'>
             <h3>Author</h3>
             <p className='author_name'>
-              {currentArticle.author} ({currentArticle.email})
+              {currentArticle.author}{' '}
+              {!isDemo ? `(${currentArticle.email})` : '*******@gmail.com'}
             </p>
           </div>
 

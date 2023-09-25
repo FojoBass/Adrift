@@ -5,6 +5,8 @@
   background-color: $bg_over;
   z-index: 15;
   display: flex;
+  backdrop-filter: blur(20px);
+  padding: 0px 10px;
 
   .center_sect {
     margin: auto;

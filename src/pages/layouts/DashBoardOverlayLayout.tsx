@@ -74,7 +74,7 @@ const DashBoardOverlayLayout: React.FC<DBLPropInt> = ({ type, children }) => {
   return (
     <section className='dbl_sect'>
       <div
-        className='dbl_sect_wrapper'
+        className={`dbl_sect_wrapper ${type === 'all authors' ? 'wide' : ''}`}
         style={isAuthors ? { width: '1300px' } : {}}
       >
         <h3 className='sect_heading'>

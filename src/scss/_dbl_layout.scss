@@ -15,6 +15,11 @@
     box-shadow: 0 0 10px $box_shd;
     padding: 0 20px 10px;
 
+    &.wide {
+      min-width: 1200px;
+      overflow-x: auto;
+    }
+
     .sect_heading {
       position: relative;
 
@@ -129,6 +134,10 @@
       grid-column-gap: 30px;
       margin-bottom: 20px;
 
+      @include mediaQ(max, 650px) {
+        grid-template-columns: 1fr;
+      }
+
       .form_opt {
         position: relative;
 
@@ -158,6 +167,10 @@
           border-bottom: 1px solid $box_shd_tint;
           padding-bottom: 5px;
 
+          @include mediaQ(max, 500px) {
+            font-size: $txt_size2;
+          }
+
           &:focus {
             border-color: $box_shd;
           }
@@ -170,6 +183,10 @@
           cursor: pointer;
           outline: none;
           text-transform: capitalize;
+
+          @include mediaQ(max, 500px) {
+            font-size: $txt_size2;
+          }
         }
       }
     }

@@ -5,6 +5,7 @@ import { userSlice } from '../../../features/user/userSlice';
 import { getAuthors } from '../../../features/user/userAsyncThunk';
 import { toast } from 'react-toastify';
 import { StatusEnum, UserInfoInt } from '../../../types';
+import { useGlobalContext } from '../../../context';
 
 const AllAuthors = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -21,6 +22,8 @@ const AllAuthors = () => {
   const [grandDispAuths, setGrandDispAuths] =
     useState<UserInfoInt[]>(allAuthors);
   const [pageLimit] = useState(10);
+
+  const { isDemo } = useGlobalContext();
 
   useEffect(() => {
     const modDispAuth = allAuthors.filter(
@@ -131,7 +134,9 @@ const AllAuthors = () => {
                             {auth.id.slice(auth.id.length - 3)}
                           </p>
                           <p className='auth_info'>{auth.name}</p>
-                          <p className='auth_info'>{auth.email}</p>
+                          <p className='auth_info'>
+                            {!isDemo ? `${auth.email}` : '****@gmail.com'}
+                          </p>
                           <p className='auth_info'>{auth.affiliation}</p>
                           <p className='auth_info sub'>{subArticlesCount}</p>
                           <p className='auth_info rev'>{revArticlesCount}</p>

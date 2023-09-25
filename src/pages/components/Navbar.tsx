@@ -8,7 +8,7 @@ import { AiOutlineMenuFold } from 'react-icons/ai';
 
 const Navbar = () => {
   const { isLoggedIn } = useAppSelector((state) => state.user);
-  const { logOut, setIsOpenSide } = useGlobalContext();
+  const { logOut, setIsOpenSide, setIsDemo } = useGlobalContext();
   return (
     <nav id='nav_sect'>
       <div className='center_sect'>
@@ -33,7 +33,14 @@ const Navbar = () => {
             <NavLink
               to={isLoggedIn ? '/' : '/login'}
               className={`nav_link ${isLoggedIn ? 'logout_btn' : 'login_btn'}`}
-              onClick={isLoggedIn ? () => logOut && logOut() : () => {}}
+              onClick={
+                isLoggedIn
+                  ? () => {
+                      logOut && logOut();
+                      setIsDemo && setIsDemo(false);
+                    }
+                  : () => {}
+              }
             >
               {isLoggedIn ? 'Logout' : 'Login/Signup'}
             </NavLink>
@@ -44,7 +51,14 @@ const Navbar = () => {
             className={`nav_link ${
               isLoggedIn ? 'logout_btn' : 'login_btn'
             } small`}
-            onClick={isLoggedIn ? () => logOut && logOut() : () => {}}
+            onClick={
+              isLoggedIn
+                ? () => {
+                    logOut && logOut();
+                    setIsDemo && setIsDemo(false);
+                  }
+                : () => {}
+            }
           >
             {isLoggedIn ? 'Logout' : 'Login/Signup'}
           </NavLink>

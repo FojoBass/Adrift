@@ -9,6 +9,7 @@ import { useAppSelector, useAppDispatch } from '../app/store';
 import { userSlice } from '../features/user/userSlice';
 import { forgotPword, signInUser } from '../features/user/userAsyncThunk';
 import { validateEmail } from '../helpers/formHandling';
+import { BsCaretDownFill, BsCaretUpFill } from 'react-icons/bs';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +24,12 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('author');
   const [isForgot, setIsForgot] = useState(false);
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
+
+  const { setIsDemo, isDemo } = useGlobalContext();
+
+  const demoRef = useRef<HTMLDivElement | null>(null);
+  const demoContainerRef = useRef<HTMLDivElement | null>(null);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +37,29 @@ const Login = () => {
     if (!email || !password) toast.info('All fields are required');
     else dispatch(signInUser({ email: email.toLowerCase(), password, role }));
   };
+
+  const handleDemo = (role: string) => {
+    if (isLoggedIn) toast.info('An account is already logged in');
+    else {
+      setEmail(
+        process.env.REACT_APP_DEMO_EMAIL ? process.env.REACT_APP_DEMO_EMAIL : ''
+      );
+      setPassword(
+        process.env.REACT_APP_DEMO_PASSWORD
+          ? process.env.REACT_APP_DEMO_PASSWORD
+          : ''
+      );
+      setRole(role);
+      setIsDemoOpen(false);
+      setIsDemo && setIsDemo(true);
+    }
+  };
+
+  useEffect(() => {
+    if (isDemo && !isLoggedIn) {
+      dispatch(signInUser({ email: email.toLowerCase(), password, role }));
+    }
+  }, [isLoggedIn, isDemo, email, password, role]);
 
   useEffect(() => {
     dispatch(setIsSignedUp(false));
@@ -58,6 +88,17 @@ const Login = () => {
 
     dispatch(resetAuthError(''));
   }, [appError]);
+
+  useEffect(() => {
+    if (demoRef.current && demoContainerRef.current) {
+      const el = demoRef.current;
+      const elContainer = demoContainerRef.current;
+
+      if (isDemoOpen)
+        elContainer.style.height = el.getBoundingClientRect().height + 5 + 'px';
+      else elContainer.style.height = '0px';
+    }
+  }, [isDemoOpen, demoRef, demoContainerRef]);
 
   return (
     <>
@@ -105,16 +146,62 @@ const Login = () => {
             Forgot password?
           </button>
         </div>
-        <select
-          className='login_opts'
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-        >
-          <option value='author'>Login as Author</option>
-          <option value='editor'>Login in as Editor</option>
-          <option value='reviewer'>Login as Reviewer</option>
-          <option value='admin'>Login as Admin</option>
-        </select>
+
+        <div className='select_wrapper'>
+          <select
+            className='login_opts'
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <option value='author'>Author</option>
+            <option value='editor'>Editor</option>
+            <option value='reviewer'>Reviewer</option>
+            <option value='admin'>Admin</option>
+          </select>
+
+          <div className='demo_opts'>
+            <button
+              type='button'
+              className='demo_btn'
+              onClick={() => setIsDemoOpen(!isDemoOpen)}
+            >
+              Demo {isDemoOpen ? <BsCaretUpFill /> : <BsCaretDownFill />}
+            </button>
+
+            <div className='demo_opts_super_wrapper' ref={demoContainerRef}>
+              <div className='demo_opts_wrapper' ref={demoRef}>
+                <button
+                  type='button'
+                  className='demo_opt'
+                  onClick={() => handleDemo('author')}
+                >
+                  Author
+                </button>
+                <button
+                  type='button'
+                  className='demo_opt'
+                  onClick={() => handleDemo('editor')}
+                >
+                  Editor
+                </button>
+                <button
+                  type='button'
+                  className='demo_opt'
+                  onClick={() => handleDemo('reviewer')}
+                >
+                  Reviewer
+                </button>
+                <button
+                  type='button'
+                  className='demo_opt'
+                  onClick={() => handleDemo('admin')}
+                >
+                  Admin
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </AuthFormsLayout>
 
       {isForgot && <ForgotPass setIsForgot={setIsForgot} />}

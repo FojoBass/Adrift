@@ -129,8 +129,6 @@ export const uploadVersion = createAsyncThunk<
       }
     }
 
-    console.log('suburls ut: ', subUrls);
-
     //* upload main file
     const mainUrl = payload.mainFile
       ? await uploadFile(payload.mainFile, id, true, 'main')

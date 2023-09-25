@@ -13,7 +13,7 @@
     width: 500px;
     background-color: lighten($bg_sub, 5);
     box-shadow: 0 0 5px $box_shd_tint;
-    overflow: hidden;
+    // overflow: hidden;
     border-radius: $brd_rad;
     padding: 20px;
     margin: auto;
@@ -61,7 +61,7 @@
         color: $txt_clr3;
 
         @include mediaQ(max, 500px) {
-          font-size: $txt_size1;
+          font-size: $txt_size2;
         }
 
         &:focus {
@@ -75,7 +75,7 @@
         font-size: $txt_size2;
 
         @include mediaQ(max, 500px) {
-          font-size: $txt_size0;
+          font-size: $txt_size1;
         }
       }
     }
@@ -85,11 +85,11 @@
       width: 100%;
       margin: 20px 0;
 
-      font-size: $txt_size1;
+      font-size: $txt_size2;
       color: $spc_clr;
 
       @include mediaQ(max, 500px) {
-        font-size: $txt_size0;
+        font-size: $txt_size1;
       }
 
       a {
@@ -170,15 +170,69 @@
 }
 
 #login_sect {
-  .login_opts {
-    margin: auto;
-    padding: 10px 20px;
-    border-radius: $brd_rad_small;
-    font-size: $txt_size2;
+  .select_wrapper {
+    display: flex;
+    width: 100%;
+    position: relative;
 
-    @include mediaQ(max, 500px) {
+    .demo_opts {
+      @include position(absolute, right, top, 0px, 0px);
       font-size: $txt_size1;
-      padding: 5px 10px;
+
+      .demo_btn {
+        border: 1.5px solid $spc_clr;
+        color: $spc_clr;
+        padding: 5px 8px;
+        border-radius: 5px;
+
+        &:hover {
+          background-color: $spc_clr;
+          color: $txt_clr2;
+        }
+      }
+
+      .demo_opts_super_wrapper {
+        transition: all ease $mid_trans;
+        overflow: hidden;
+        height: 0;
+
+        .demo_opts_wrapper {
+          @include flexDisplay(flex-start, center, column);
+
+          padding: 2px 0;
+          background-color: $bg_main;
+          margin-top: 3px;
+          box-shadow: 0 0 3px $box_shd;
+
+          .demo_opt {
+            padding: 5px;
+            text-align: center;
+            width: 100%;
+            border-bottom: 0.5px dashed $box_shd_tint;
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            &:hover {
+              color: $txt_clr2;
+              background-color: $spc_clr;
+            }
+          }
+        }
+      }
+    }
+
+    .login_opts {
+      margin: auto;
+      padding: 10px 20px;
+      border-radius: $brd_rad_small;
+      font-size: $txt_size2;
+
+      @include mediaQ(max, 500px) {
+        font-size: $txt_size1;
+        padding: 5px 10px;
+      }
     }
   }
 }
